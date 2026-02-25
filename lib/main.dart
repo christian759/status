@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/status_provider.dart';
-import 'screens/status_saver.dart';
+import 'screens/status_saver_screen.dart';
 import 'theme/app_theme.dart';
 
 void main() {
