@@ -1,24 +1,20 @@
-# StatusVault
+# WhatsApp Status Saver
 
-StatusVault is an Android-focused Flutter starter that detects WhatsApp statuses,
-saves the media, and organizes everything behind folders and a private vault. It
-ships with a provider-backed state layer, clean grid-based feeds, vault safeguards,
-and lightweight settings + pro feature flows.
+This repo now hosts a single-screen experience for WhatsApp status saving. The
+app watches the WhatsApp cache, lists detected images and videos, and gives each
+item a clear "Save" action with an optional vault toggle—no feed or extra tabs.
 
-## Features
+## Key behaviors
 
-- Status detection grid with quick save/vault shortcuts
-- Folder list with saved status previews and action menus
-- Private vault guarded by PIN/biometric toggle simulation
-- Pro feature controls for auto-download, custom folders, and expiry alerts
-- Simple link download dialog and settings surface
+- List of detected statuses with one-tap save and vault toggles.
+- Sync button stub for manual refresh of detected items.
+- Provider-based state so you can plug in real file observers and persistence.
 
 ## Getting started
 
 1. Install Flutter and ensure `flutter doctor` is clean.
 2. Fetch packages with `flutter pub get`.
-3. Run on Android with `flutter run`.
+3. Launch on Android with `flutter run`.
 
-The app is structured around `StatusProvider`, `StatusVaultHome`, and themed
-widgets under `lib/src/`. Replace mock data with real storage watchers, a Hive/
-SQLite store, and any native helpers you need for file observers or biometrics.
+Replace the seeded data in `StatusProvider` with actual file-watching logic
+plus persistent storage (Hive/SQLite) as needed.
