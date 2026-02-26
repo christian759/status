@@ -21,6 +21,28 @@ class StatusTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final dateLabel = DateFormat('EEE, MMM d').format(status.modifiedAt);
 
+    final preview = status.isVideo
+        ? Container(
+            color: Colors.black26,
+            child: const Center(
+              child: Icon(Icons.play_circle_fill, size: 64, color: Colors.white70),
+            ),
+          )
+        : Image.file(
+            File(status.path),
+            fit: BoxFit.cover,
+            errorBuilder: (_, error, stackTrace) {
+              debugPrint('Status preview failed for ${status.name}: $error');
+              debugPrintStack(stackTrace: stackTrace);
+              return Container(
+                color: Colors.grey.shade200,
+                child: const Center(
+                  child: Icon(Icons.image_not_supported, size: 48),
+                ),
+              );
+            },
+          );
+
     return Container(
       height: 240,
       decoration: BoxDecoration(
@@ -37,22 +59,7 @@ class StatusTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         child: Stack(
           children: [
-            Positioned.fill(
-              child: Image.file(
-                File(status.path),
-                fit: BoxFit.cover,
-                errorBuilder: (_, error, stackTrace) {
-                  debugPrint('Status preview failed for ${status.name}: $error');
-                  debugPrintStack(stackTrace: stackTrace);
-                  return Container(
-                    color: Colors.grey.shade200,
-                    child: const Center(
-                      child: Icon(Icons.image_not_supported, size: 48),
-                    ),
-                  );
-                },
-              ),
-            ),
+            Positioned.fill(child: preview),
             Positioned.fill(
               child: Container(
                 decoration: const BoxDecoration(

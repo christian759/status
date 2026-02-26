@@ -100,7 +100,7 @@ class StatusProvider extends ChangeNotifier {
   }
 
   Future<String> saveStatus(StatusItem status) async {
-    final targetDir = await _buildSaveDirectory();
+    final targetDir = await _buildSaveDirectory(status.isVideo);
     final destination = File(p.join(targetDir.path, p.basename(status.path)));
 
     if (await destination.exists()) {
@@ -151,21 +151,22 @@ class StatusProvider extends ChangeNotifier {
     ];
   }
 
-  Future<Directory> _buildSaveDirectory() async {
-    Directory baseDir;
-
+  Future<Directory> _buildSaveDirectory(bool forVideo) async {
     if (Platform.isAndroid) {
-      baseDir = await getExternalStorageDirectory() ??
-          await getApplicationDocumentsDirectory();
-    } else {
-      baseDir = await getApplicationDocumentsDirectory();
+      const base = '/storage/emulated/0';
+      final folder = forVideo ? 'Movies/StatusVault' : 'Pictures/StatusVault';
+      final targetDir = Directory('$base/$folder');
+      if (!await targetDir.exists()) {
+        await targetDir.create(recursive: true);
+      }
+      return targetDir;
     }
 
-    final targetDir = Directory(p.join(baseDir.path, 'StatusVault'));
+    final fallbackDir = await getApplicationDocumentsDirectory();
+    final targetDir = Directory(p.join(fallbackDir.path, 'StatusVault'));
     if (!await targetDir.exists()) {
       await targetDir.create(recursive: true);
     }
-
     return targetDir;
   }
 }
