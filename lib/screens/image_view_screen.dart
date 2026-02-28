@@ -58,7 +58,7 @@ class ImageViewScreen extends StatelessWidget {
                   IconButton(
                     icon: const Icon(Icons.share_rounded, color: Colors.white),
                     onPressed: () {
-                      Share.shareXFiles([XFile(statusFile.path)], text: 'Check out this status!');
+                      Share.shareUri(Uri.file(statusFile.path), sharePositionOrigin: const Rect.fromLTWH(0, 0, 10, 10));
                     },
                   ),
                 ],

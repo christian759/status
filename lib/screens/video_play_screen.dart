@@ -103,7 +103,7 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
                   IconButton(
                     icon: const Icon(Icons.share_rounded, color: Colors.white),
                     onPressed: () {
-                      Share.shareXFiles([XFile(widget.statusFile.path)], text: 'Check out this status video!');
+                      Share.shareUri(Uri.file(widget.statusFile.path), sharePositionOrigin: const Rect.fromLTWH(0, 0, 10, 10));
                     },
                   ),
                 ],
