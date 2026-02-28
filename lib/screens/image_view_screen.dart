@@ -71,7 +71,7 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
                   IconButton(
                     icon: const Icon(Icons.share_rounded, color: Colors.white),
                     onPressed: () {
-                      SharePlus.instance.shareUri(Uri.file(widget.statusFile.path), sharePositionOrigin: const Rect.fromLTWH(0, 0, 10, 10));
+                      Share.shareXFiles([XFile(widget.statusFile.path)], text: 'Check out this status!');
                     },
                   ),
                 ],
@@ -107,15 +107,17 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
                     child: InkWell(
                       borderRadius: BorderRadius.circular(32),
                       onTap: isSaved ? null : () {
+                        // Store references before async gaps
+                        final scaffoldMessenger = ScaffoldMessenger.of(context);
+                        final navigator = Navigator.of(context);
+
                         // Show Ad First, then Save
                         AdHelper.showInterstitialAd(
                           onAdClosed: () async {
                             final success = await provider.saveStatus(widget.statusFile.path);
-                            if (!mounted) return;
                             
                             if (success) {
-                              Navigator.pushReplacement(
-                                context,
+                              navigator.pushReplacement(
                                 PageRouteBuilder(
                                   pageBuilder: (context, animation, secondaryAnimation) => const SuccessScreen(),
                                   transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -124,7 +126,7 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
                                 ),
                               );
                             } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
+                              scaffoldMessenger.showSnackBar(
                                 SnackBar(
                                   content: Text(
                                     'Failed to save status.',
