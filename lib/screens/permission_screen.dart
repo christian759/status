@@ -34,16 +34,16 @@ class PermissionScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.white.withOpacity(0.05),
+                      color: Colors.white.withValues(alpha: 0.05),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF00E676).withOpacity(0.2),
+                          color: const Color(0xFF00E676).withValues(alpha: 0.2),
                           blurRadius: 40,
                           spreadRadius: 10,
                         ),
                       ],
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.1),
+                        color: Colors.white.withValues(alpha: 0.1),
                         width: 1,
                       ),
                     ),
@@ -103,7 +103,7 @@ class PermissionScreen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(16),
                             ),
                             elevation: 8,
-                            shadowColor: const Color(0xFF00E676).withOpacity(0.5),
+                            shadowColor: const Color(0xFF00E676).withValues(alpha: 0.5),
                           ),
                           child: Text(
                             'Allow Access',

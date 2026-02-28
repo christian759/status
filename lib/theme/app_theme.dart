@@ -23,8 +23,6 @@ class AppTheme {
       colorScheme: const ColorScheme.dark(
         primary: primaryColor,
         secondary: accentColor,
-        surface: surfaceDark,
-        background: backgroundDark,
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
@@ -45,7 +43,7 @@ class AppTheme {
         bodyMedium: GoogleFonts.inter(fontSize: 14, color: textSecondary),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: surfaceDark.withOpacity(0.9),
+        backgroundColor: surfaceDark.withValues(alpha: 0.9),
         selectedItemColor: primaryColor,
         unselectedItemColor: textSecondary,
         type: BottomNavigationBarType.fixed,
@@ -61,7 +59,7 @@ class AppTheme {
           ),
           textStyle: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.bold),
           elevation: 8,
-          shadowColor: primaryColor.withOpacity(0.5),
+          shadowColor: primaryColor.withValues(alpha: 0.5),
         ),
       ),
     );

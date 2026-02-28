@@ -43,7 +43,7 @@ class ImageViewScreen extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.black.withOpacity(0.7),
+                    Colors.black.withValues(alpha: 0.7),
                     Colors.transparent,
                   ],
                 ),
@@ -79,11 +79,11 @@ class ImageViewScreen extends StatelessWidget {
                   duration: const Duration(milliseconds: 300),
                   height: 64,
                   decoration: BoxDecoration(
-                    color: isSaved ? const Color(0xFF1E2732).withOpacity(0.9) : const Color(0xFF00E676).withOpacity(0.95),
+                    color: isSaved ? const Color(0xFF1E2732).withValues(alpha: 0.9) : const Color(0xFF00E676).withValues(alpha: 0.95),
                     borderRadius: BorderRadius.circular(32),
                     boxShadow: [
                       BoxShadow(
-                        color: isSaved ? Colors.black26 : const Color(0xFF00E676).withOpacity(0.4),
+                        color: isSaved ? Colors.black26 : const Color(0xFF00E676).withValues(alpha: 0.4),
                         blurRadius: 20,
                         offset: const Offset(0, 10),
                       ),

@@ -108,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.inbox_rounded, size: 80, color: Colors.white.withOpacity(0.1)),
+            Icon(Icons.inbox_rounded, size: 80, color: Colors.white.withValues(alpha: 0.1)),
             const SizedBox(height: 16),
             Text(
               'No statuses found',

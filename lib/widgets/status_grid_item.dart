@@ -40,7 +40,7 @@ class StatusGridItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               blurRadius: 10,
               spreadRadius: 2,
               offset: const Offset(0, 5),
@@ -66,7 +66,7 @@ class StatusGridItem extends StatelessWidget {
               
               if (statusFile.isVideo)
                 Container(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha: 0.3),
                   child: const Center(
                     child: Icon(
                       Icons.play_circle_fill_rounded,
