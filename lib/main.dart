@@ -4,9 +4,11 @@ import 'providers/status_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/permission_screen.dart';
 import 'theme/app_theme.dart';
+import 'utils/ad_helper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  AdHelper.initAds();
   runApp(
     MultiProvider(
       providers: [

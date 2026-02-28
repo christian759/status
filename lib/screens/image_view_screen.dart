@@ -5,11 +5,24 @@ import 'package:share_plus/share_plus.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/status_file.dart';
 import '../providers/status_provider.dart';
+import '../utils/ad_helper.dart';
+import 'success_screen.dart';
 
-class ImageViewScreen extends StatelessWidget {
+class ImageViewScreen extends StatefulWidget {
   final StatusFile statusFile;
 
   const ImageViewScreen({super.key, required this.statusFile});
+
+  @override
+  State<ImageViewScreen> createState() => _ImageViewScreenState();
+}
+
+class _ImageViewScreenState extends State<ImageViewScreen> {
+  @override
+  void initState() {
+    super.initState();
+    AdHelper.loadInterstitialAd();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,12 +33,12 @@ class ImageViewScreen extends StatelessWidget {
         children: [
           // The Image (with Hero)
           Hero(
-            tag: statusFile.path,
+            tag: widget.statusFile.path,
             child: InteractiveViewer(
               minScale: 1.0,
               maxScale: 4.0,
               child: Image.file(
-                File(statusFile.path),
+                File(widget.statusFile.path),
                 fit: BoxFit.contain,
               ),
             ),
@@ -58,7 +71,7 @@ class ImageViewScreen extends StatelessWidget {
                   IconButton(
                     icon: const Icon(Icons.share_rounded, color: Colors.white),
                     onPressed: () {
-                      Share.shareUri(Uri.file(statusFile.path), sharePositionOrigin: const Rect.fromLTWH(0, 0, 10, 10));
+                      SharePlus.instance.shareUri(Uri.file(widget.statusFile.path), sharePositionOrigin: const Rect.fromLTWH(0, 0, 10, 10));
                     },
                   ),
                 ],
@@ -73,7 +86,7 @@ class ImageViewScreen extends StatelessWidget {
             right: 32,
             child: Consumer<StatusProvider>(
               builder: (context, provider, child) {
-                final isSaved = provider.savedStatuses.any((s) => s.path.endsWith(statusFile.path.split('/').last));
+                final isSaved = provider.savedStatuses.any((s) => s.path.endsWith(widget.statusFile.path.split('/').last));
                 
                 return AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
@@ -93,21 +106,38 @@ class ImageViewScreen extends StatelessWidget {
                     color: Colors.transparent,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(32),
-                      onTap: isSaved ? null : () async {
-                        final success = await provider.saveStatus(statusFile.path);
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                success ? 'Saved to Gallery!' : 'Failed to save.',
-                                style: GoogleFonts.inter(fontWeight: FontWeight.w600),
-                              ),
-                              backgroundColor: success ? const Color(0xFF00C853) : Colors.redAccent,
-                              behavior: SnackBarBehavior.floating,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                            ),
-                          );
-                        }
+                      onTap: isSaved ? null : () {
+                        // Show Ad First, then Save
+                        AdHelper.showInterstitialAd(
+                          onAdClosed: () async {
+                            final success = await provider.saveStatus(widget.statusFile.path);
+                            if (!mounted) return;
+                            
+                            if (success) {
+                              Navigator.pushReplacement(
+                                context,
+                                PageRouteBuilder(
+                                  pageBuilder: (context, animation, secondaryAnimation) => const SuccessScreen(),
+                                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                    return FadeTransition(opacity: animation, child: child);
+                                  },
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Failed to save status.',
+                                    style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                                  ),
+                                  backgroundColor: Colors.redAccent,
+                                  behavior: SnackBarBehavior.floating,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                ),
+                              );
+                            }
+                          },
+                        );
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,

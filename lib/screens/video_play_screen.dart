@@ -7,6 +7,8 @@ import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import '../models/status_file.dart';
 import '../providers/status_provider.dart';
+import '../utils/ad_helper.dart';
+import 'success_screen.dart';
 
 class VideoPlayScreen extends StatefulWidget {
   final StatusFile statusFile;
@@ -24,6 +26,7 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
   @override
   void initState() {
     super.initState();
+    AdHelper.loadInterstitialAd();
     _initializePlayer();
   }
 
@@ -103,7 +106,7 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
                   IconButton(
                     icon: const Icon(Icons.share_rounded, color: Colors.white),
                     onPressed: () {
-                      Share.shareUri(Uri.file(widget.statusFile.path), sharePositionOrigin: const Rect.fromLTWH(0, 0, 10, 10));
+                      SharePlus.instance.shareUri(Uri.file(widget.statusFile.path), sharePositionOrigin: const Rect.fromLTWH(0, 0, 10, 10));
                     },
                   ),
                 ],
@@ -138,21 +141,38 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
                     color: Colors.transparent,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(32),
-                      onTap: isSaved ? null : () async {
-                        final success = await provider.saveStatus(widget.statusFile.path);
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                success ? 'Video Saved to Gallery!' : 'Failed to save.',
-                                style: GoogleFonts.inter(fontWeight: FontWeight.w600),
-                              ),
-                              backgroundColor: success ? const Color(0xFF00C853) : Colors.redAccent,
-                              behavior: SnackBarBehavior.floating,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                            ),
-                          );
-                        }
+                      onTap: isSaved ? null : () {
+                        // Show Ad First, then Save
+                        AdHelper.showInterstitialAd(
+                          onAdClosed: () async {
+                            final success = await provider.saveStatus(widget.statusFile.path);
+                            if (!mounted) return;
+                            
+                            if (success) {
+                              Navigator.pushReplacement(
+                                context,
+                                PageRouteBuilder(
+                                  pageBuilder: (context, animation, secondaryAnimation) => const SuccessScreen(),
+                                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                    return FadeTransition(opacity: animation, child: child);
+                                  },
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Failed to save video.',
+                                    style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                                  ),
+                                  backgroundColor: Colors.redAccent,
+                                  behavior: SnackBarBehavior.floating,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                ),
+                              );
+                            }
+                          },
+                        );
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
