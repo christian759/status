@@ -9,37 +9,42 @@ class SuccessScreen extends StatefulWidget {
 }
 
 class _SuccessScreenState extends State<SuccessScreen> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _fadeAnimation;
+  AnimationController? _controller;
+  Animation<double>? _scaleAnimation;
+  Animation<double>? _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
+    final controller = AnimationController(
        vsync: this, 
        duration: const Duration(milliseconds: 800)
     );
+    _controller = controller;
 
     _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.elasticOut),
+      CurvedAnimation(parent: controller, curve: Curves.elasticOut),
     );
 
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: const Interval(0.0, 0.5, curve: Curves.easeIn)),
+      CurvedAnimation(parent: controller, curve: const Interval(0.0, 0.5, curve: Curves.easeIn)),
     );
 
-    _controller.forward();
+    controller.forward();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_controller == null || _scaleAnimation == null || _fadeAnimation == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
@@ -48,12 +53,12 @@ class _SuccessScreenState extends State<SuccessScreen> with SingleTickerProvider
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 80.0),
               child: AnimatedBuilder(
-                animation: _controller,
+                animation: _controller!,
                 builder: (context, child) {
                   return Opacity(
-                    opacity: _fadeAnimation.value,
+                    opacity: _fadeAnimation!.value,
                     child: Transform.scale(
-                      scale: _scaleAnimation.value,
+                      scale: _scaleAnimation!.value,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -111,3 +116,4 @@ class _SuccessScreenState extends State<SuccessScreen> with SingleTickerProvider
     );
   }
 }
+

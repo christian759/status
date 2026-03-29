@@ -83,10 +83,11 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
                   duration: const Duration(milliseconds: 300),
                   height: 60,
                   decoration: BoxDecoration(
-                    color: isSaved ? Colors.black : Theme.of(context).primaryColor,
+                    color: isSaved ? Colors.black : Theme.of(context).colorScheme.primary,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Theme.of(context).primaryColor, width: 2),
+                    border: Border.all(color: (Theme.of(context).colorScheme.primary), width: 2),
                   ),
+
                   child: Material(
                     color: Colors.transparent,
                     child: InkWell(
@@ -114,18 +115,20 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
                         children: [
                           Icon(
                             isSaved ? Icons.verified_user_rounded : Icons.arrow_downward_rounded,
-                            color: isSaved ? Theme.of(context).primaryColor : Colors.black,
+                            color: isSaved ? (Theme.of(context).colorScheme.primary) : Colors.black,
                             size: 24,
                           ),
+
                           const SizedBox(width: 12),
                           Text(
                             isSaved ? 'SAVED' : 'SAVE',
                             style: GoogleFonts.outfit(
-                              color: isSaved ? Theme.of(context).primaryColor : Colors.black,
+                              color: isSaved ? (Theme.of(context).colorScheme.primary) : Colors.black,
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 2.0,
                             ),
+
                           ),
                         ],
                       ),

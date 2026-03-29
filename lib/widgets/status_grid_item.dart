@@ -42,16 +42,18 @@ class StatusGridItem extends StatelessWidget {
           color: Colors.black,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? (Theme.of(context).primaryColor) : Colors.white10,
+            color: isSelected ? (Theme.of(context).colorScheme.primary) : Colors.white10,
             width: isSelected ? 3 : 1,
           ),
+
           boxShadow: isSelected ? [
             BoxShadow(
-              color: (Theme.of(context).primaryColor).withOpacity(0.3),
+              color: (Theme.of(context).colorScheme.primary).withOpacity(0.3),
               blurRadius: 12,
               spreadRadius: 2,
             )
           ] : [],
+
         ),
         clipBehavior: Clip.antiAlias,
         child: Stack(
@@ -92,9 +94,10 @@ class StatusGridItem extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
+                    color: (Theme.of(context).colorScheme.primary),
                     borderRadius: BorderRadius.circular(8),
                   ),
+
                   child: const Icon(
                     Icons.play_arrow_rounded,
                     color: Colors.black,
@@ -116,9 +119,10 @@ class StatusGridItem extends StatelessWidget {
                   ),
                   child: Icon(
                     Icons.check_rounded,
-                    color: Theme.of(context).primaryColor,
+                    color: (Theme.of(context).colorScheme.primary),
                     size: 16,
                   ),
+
                 ),
               ),
           ],

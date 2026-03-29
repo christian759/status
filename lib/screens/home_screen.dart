@@ -15,7 +15,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+  TabController? _tabController;
 
   @override
   void initState() {
@@ -25,13 +25,18 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _tabController?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<StatusProvider>(context);
+    final controller = _tabController;
+    
+    if (controller == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -101,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 ),
             ],
             bottom: TabBar(
-              controller: _tabController,
+              controller: controller,
               tabs: const [
                 Tab(text: 'IMAGES'),
                 Tab(text: 'VIDEOS'),
@@ -115,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             return Stack(
               children: [
                 TabBarView(
-                  controller: _tabController,
+                  controller: controller,
                   children: [
                     _buildGrid(provider, provider.images),
                     _buildGrid(provider, provider.videos),
