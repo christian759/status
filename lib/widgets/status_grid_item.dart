@@ -150,10 +150,11 @@ class _VideoThumbnailWidget extends StatelessWidget {
         return Container(
           color: Colors.black26,
           child: Center(
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor.withOpacity(0.1)),
-            ),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>((Theme.of(context).colorScheme.primary).withOpacity(0.1)),
+                  ),
+
           ),
         );
       },

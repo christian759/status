@@ -65,8 +65,8 @@ class StatusProvider with ChangeNotifier {
     _errorMessage = '';
     notifyListeners();
 
-    _images = [];
-    _videos = [];
+    List<StatusFile> imagesBuffer = [];
+    List<StatusFile> videosBuffer = [];
 
     await Future.wait(_whatsappPaths.map((path) async {
       final directory = Directory(path);
@@ -77,9 +77,9 @@ class StatusProvider with ChangeNotifier {
             if (item is File) {
               final fileName = item.path.toLowerCase();
               if (fileName.endsWith('.mp4')) {
-                _videos.add(StatusFile(path: item.path, isVideo: true));
+                videosBuffer.add(StatusFile(path: item.path, isVideo: true));
               } else if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg') || fileName.endsWith('.png')) {
-                _images.add(StatusFile(path: item.path, isVideo: false));
+                imagesBuffer.add(StatusFile(path: item.path, isVideo: false));
               }
             }
           }
@@ -88,6 +88,10 @@ class StatusProvider with ChangeNotifier {
         }
       }
     }));
+
+    _images = imagesBuffer;
+    _videos = videosBuffer;
+
 
 
     if (_images.isEmpty && _videos.isEmpty) {
@@ -100,7 +104,7 @@ class StatusProvider with ChangeNotifier {
 
   Future<void> fetchSavedStatuses() async {
     final directory = Directory('/storage/emulated/0/Pictures/StatusSaver');
-    _savedStatuses = [];
+    List<StatusFile> savedBuffer = [];
     if (directory.existsSync()) {
       try {
         final items = directory.list();
@@ -108,9 +112,9 @@ class StatusProvider with ChangeNotifier {
           if (item is File && !item.path.contains('.nomedia')) {
             final fileName = item.path.toLowerCase();
             if (fileName.endsWith('.mp4')) {
-              _savedStatuses.add(StatusFile(path: item.path, isVideo: true));
+              savedBuffer.add(StatusFile(path: item.path, isVideo: true));
             } else if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg') || fileName.endsWith('.png')) {
-              _savedStatuses.add(StatusFile(path: item.path, isVideo: false));
+              savedBuffer.add(StatusFile(path: item.path, isVideo: false));
             }
           }
         }
@@ -118,8 +122,10 @@ class StatusProvider with ChangeNotifier {
         debugPrint('Error listing saved statuses: $e');
       }
     }
+    _savedStatuses = savedBuffer;
     notifyListeners();
   }
+
 
   Future<String?> getThumbnail(String videoPath) async {
     if (_thumbnailCache.containsKey(videoPath)) {

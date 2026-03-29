@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             expandedHeight: 140,
             floating: false,
             pinned: true,
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            backgroundColor: Theme.of(context).colorScheme.surface,
             flexibleSpace: FlexibleSpaceBar(
               titlePadding: const EdgeInsets.only(left: 16, bottom: 16),
               title: Text(
@@ -51,9 +51,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 style: GoogleFonts.outfit(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: provider.isSelectionMode ? Theme.of(context).primaryColor : Colors.white,
+                  color: (provider.selectedPaths.isNotEmpty) ? (Theme.of(context).colorScheme.primary) : Colors.white,
                   letterSpacing: 2,
                 ),
+
               ),
               background: Container(
                 decoration: const BoxDecoration(
@@ -81,13 +82,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         if (mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('$count STATUSES SAVED'),
-                              backgroundColor: Theme.of(context).primaryColor,
+                              content: Text('${count ?? 0} STATUSES SAVED'),
+                              backgroundColor: Theme.of(context).colorScheme.primary,
                               behavior: SnackBarBehavior.floating,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                             ),
                           );
                         }
+
                       },
                     );
                   },
@@ -127,10 +129,12 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     right: 0,
                     child: LinearProgressIndicator(
                       backgroundColor: Colors.transparent,
-                      valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+                      valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
                       minHeight: 2,
                     ),
                   ),
+
+
               ],
             );
           },
@@ -149,11 +153,12 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             Text(
               'EMPTY',
               style: GoogleFonts.outfit(
-                color: Colors.white.withValues(alpha: 0.05),
+                color: Colors.white.withOpacity(0.05),
                 fontSize: 80,
                 fontWeight: FontWeight.bold,
               ),
             ),
+
           ],
         ),
       );
@@ -178,6 +183,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           ),
           itemCount: statuses.length,
           itemBuilder: (context, index) {
+            final status = statuses[index];
+            if (status == null) return const SizedBox.shrink();
+            
             return AnimationConfiguration.staggeredGrid(
               position: index,
               duration: const Duration(milliseconds: 400),
@@ -186,13 +194,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 child: ScaleAnimation(
                   scale: 0.95,
                   child: StatusGridItem(
-                    statusFile: statuses[index],
-                    key: ValueKey(statuses[index].path),
+                    statusFile: status,
+                    key: ValueKey(status.path),
                   ),
                 ),
               ),
             );
           },
+
         ),
       ),
     );

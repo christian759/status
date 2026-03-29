@@ -44,11 +44,12 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
         looping: true,
         showControls: true,
         materialProgressColors: ChewieProgressColors(
-          playedColor: Theme.of(context).primaryColor,
-          handleColor: Theme.of(context).primaryColor,
+          playedColor: (Theme.of(context).primaryColor),
+          handleColor: (Theme.of(context).primaryColor),
           backgroundColor: Colors.white24,
           bufferedColor: Colors.white54,
         ),
+
         autoInitialize: true,
         errorBuilder: (context, errorMessage) {
           return Center(
@@ -111,10 +112,11 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
                       ? Chewie(controller: _chewieController!)
                       : Center(
                           child: CircularProgressIndicator(
-                            color: Theme.of(context).primaryColor,
+                            color: Theme.of(context).colorScheme.primary,
                             strokeWidth: 2,
                           ),
                         ),
+
 
                 ),
               ),
