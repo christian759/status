@@ -114,6 +114,7 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
             ),
           ),
           
+          // Bottom Actions
           Positioned(
             bottom: 40,
             left: 40,
@@ -124,23 +125,15 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
                 
                 return AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
-                  height: 64,
+                  height: 60,
                   decoration: BoxDecoration(
-                    color: isSaved ? Colors.white10 : Theme.of(context).primaryColor,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      if (!isSaved)
-                        BoxShadow(
-                          color: Theme.of(context).primaryColor.withValues(alpha: 0.4),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
-                        ),
-                    ],
+                    color: isSaved ? Colors.black : Theme.of(context).primaryColor,
+                    border: Border.all(color: Theme.of(context).primaryColor, width: 2),
+                    borderRadius: BorderRadius.zero,
                   ),
                   child: Material(
                     color: Colors.transparent,
                     child: InkWell(
-                      borderRadius: BorderRadius.circular(8),
                       onTap: isSaved ? null : () {
                         final navigator = Navigator.of(context);
                         AdHelper.showInterstitialAd(
@@ -163,18 +156,18 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
-                            isSaved ? Icons.check_circle_rounded : Icons.download_rounded,
-                            color: Colors.white,
-                            size: 28,
+                            isSaved ? Icons.verified_user_rounded : Icons.save_rounded,
+                            color: isSaved ? Theme.of(context).primaryColor : Colors.black,
+                            size: 24,
                           ),
                           const SizedBox(width: 12),
                           Text(
-                            isSaved ? 'SAVED' : 'DOWNLOAD',
-                            style: GoogleFonts.outfit(
-                              color: Colors.white,
+                            isSaved ? 'SECURED' : 'EXTRACT',
+                            style: GoogleFonts.shareTechMono(
+                              color: isSaved ? Theme.of(context).primaryColor : Colors.black,
                               fontSize: 18,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 1.5,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 2.0,
                             ),
                           ),
                         ],

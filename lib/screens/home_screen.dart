@@ -56,17 +56,22 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           if (provider.isSelectionMode)
             IconButton(
               icon: const Icon(Icons.save_alt_rounded),
-              tooltip: 'Save Selected',
-              onPressed: () async {
-                final count = await provider.saveMultipleStatuses();
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Saved $count statuses'),
-                      backgroundColor: Theme.of(context).primaryColor,
-                    ),
-                  );
-                }
+              tooltip: 'SAVE SELECTED',
+              onPressed: () {
+                AdHelper.showInterstitialAd(
+                  onAdClosed: () async {
+                    final count = await provider.saveMultipleStatuses();
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('[$count] STATUSES SECURED'),
+                          backgroundColor: Theme.of(context).primaryColor,
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                    }
+                  },
+                );
               },
             ),
           if (!provider.isSelectionMode)
