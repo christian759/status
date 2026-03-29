@@ -33,20 +33,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     final provider = Provider.of<StatusProvider>(context);
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: provider.isSelectionMode
-            ? Text(
-                '${provider.selectedPaths.length} Selected',
-                style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: Theme.of(context).primaryColor),
-              )
-            : Text(
-                'STATUS SAVER',
-                style: GoogleFonts.outfit(
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 2.0,
-                ),
-              ),
+        title: Text(
+          provider.isSelectionMode
+              ? '${provider.selectedPaths.length} SELECTED'
+              : 'STATUS SAVER',
+        ),
         leading: provider.isSelectionMode
             ? IconButton(
                 icon: const Icon(Icons.close_rounded),
@@ -56,8 +49,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         actions: [
           if (provider.isSelectionMode)
             IconButton(
-              icon: const Icon(Icons.save_alt_rounded),
-              tooltip: 'SAVE SELECTED',
+              icon: const Icon(Icons.arrow_downward_rounded),
+              tooltip: 'EXTRACT',
               onPressed: () {
                 AdHelper.showInterstitialAd(
                   onAdClosed: () async {
@@ -65,9 +58,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('[$count] STATUSES SECURED'),
+                          content: Text('$count ASSETS SECURED', style: const TextStyle(fontWeight: FontWeight.w900)),
                           backgroundColor: Theme.of(context).primaryColor,
                           behavior: SnackBarBehavior.floating,
+                          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
                         ),
                       );
                     }
@@ -90,70 +84,80 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           ],
         ),
       ),
-      body: Consumer<StatusProvider>(
-        builder: (context, provider, child) {
-          if (provider.isLoading) {
-            return Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
-                strokeWidth: 6,
-              ),
-            );
-          }
+      body: Column(
+        children: [
+          const Divider(height: 1, thickness: 1),
+          Expanded(
+            child: Consumer<StatusProvider>(
+              builder: (context, provider, child) {
+                if (provider.isLoading) {
+                  return Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+                      strokeWidth: 2,
+                    ),
+                  );
+                }
 
-          if (provider.errorMessage.isNotEmpty) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                if (provider.errorMessage.isNotEmpty) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(40.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('ERROR OCCURRED', style: Theme.of(context).textTheme.displayMedium),
+                          const SizedBox(height: 16),
+                          Text(provider.errorMessage, textAlign: TextAlign.center),
+                          const SizedBox(height: 32),
+                          ElevatedButton(
+                            onPressed: () => provider.fetchStatuses(),
+                            child: const Text('RETRY'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+
+                return TabBarView(
+                  controller: _tabController,
                   children: [
-                    Icon(Icons.error_outline_rounded, size: 80, color: Theme.of(context).primaryColor),
-                    const SizedBox(height: 24),
-                    Text(
-                      provider.errorMessage,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.inter(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 32),
-                    ElevatedButton(
-                      onPressed: () => provider.fetchStatuses(),
-                      child: const Text('RETRY'),
-                    ),
+                    _buildGrid(provider, provider.images),
+                    _buildGrid(provider, provider.videos),
+                    _buildGrid(provider, provider.savedStatuses),
                   ],
-                ),
-              ),
-            );
-          }
-
-          return TabBarView(
-            controller: _tabController,
-            children: [
-              _buildGrid(provider.images),
-              _buildGrid(provider.videos),
-              _buildGrid(provider.savedStatuses),
-            ],
-          );
-        },
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildGrid(List statuses) {
+  Widget _buildGrid(StatusProvider provider, List statuses) {
     if (statuses.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.inbox_rounded, size: 100, color: Theme.of(context).primaryColor.withValues(alpha: 0.2)),
-            const SizedBox(height: 24),
             Text(
-              'NO STATUSES FOUND',
+              'EMPTY',
+              style: GoogleFonts.outfit(
+                color: Colors.white10,
+                fontSize: 80,
+                fontWeight: FontWeight.w900,
+                letterSpacing: -4,
+              ),
+            ),
+            Text(
+              'ARCHIVE IS CURRENTLY STAGNANT',
               style: GoogleFonts.outfit(
                 color: Colors.white24,
-                fontSize: 24,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 1.5,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 2,
               ),
             ),
           ],
@@ -162,39 +166,28 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     }
 
     return RefreshIndicator(
-      color: Colors.white,
+      color: Colors.black,
       backgroundColor: Theme.of(context).primaryColor,
-      strokeWidth: 3,
       onRefresh: () async {
-        final provider = Provider.of<StatusProvider>(context, listen: false);
         await provider.fetchStatuses();
         await provider.fetchSavedStatuses();
       },
-      child: AnimationLimiter(
-        child: GridView.builder(
-          padding: const EdgeInsets.all(16),
-          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-            childAspectRatio: 0.7, // Bolder, taller items
-          ),
-          itemCount: statuses.length,
-          itemBuilder: (context, index) {
-            return AnimationConfiguration.staggeredGrid(
-              position: index,
-              duration: const Duration(milliseconds: 400),
-              columnCount: 2,
-              child: ScaleAnimation(
-                scale: 0.8,
-                child: FadeInAnimation(
-                  child: StatusGridItem(statusFile: statuses[index]),
-                ),
-              ),
-            );
-          },
+      child: GridView.builder(
+        padding: EdgeInsets.zero,
+        physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 0,
+          mainAxisSpacing: 0,
+          childAspectRatio: 1,
         ),
+        itemCount: statuses.length,
+        itemBuilder: (context, index) {
+          return StatusGridItem(
+            statusFile: statuses[index],
+            key: ValueKey(statuses[index].path),
+          );
+        },
       ),
     );
   }

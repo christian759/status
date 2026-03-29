@@ -2,19 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // Tactical Colors
-  static const Color primaryColor = Color(0xFFFE5000); // Tactical Orange
-  static const Color primaryDark = Color(0xFFCC4000);
-  static const Color accentColor = Color(0xFF00BFA5); // Tactical Teal (secondary)
-
-  // Background Colors (Matte Stealth)
-  static const Color backgroundDark = Color(0xFF000000); // Pure Black
-  static const Color surfaceDark = Color(0xFF0A0A0A); // Matte Black
-  static const Color surfaceLight = Color(0xFF111111);
-
-  // Text Colors (High Contrast)
-  static const Color textPrimary = Color(0xFFFFFFFF);
-  static const Color textSecondary = Color(0xFFAAAAAA);
+  // Swiss Minimalist Palette
+  static const Color primaryColor = Color(0xFFE07A5F); // Burnt Sienna
+  static const Color backgroundDark = Color(0xFF050505); // Inky Black
+  static const Color surfaceDark = Color(0xFF101010); // Graphite
+  static const Color textPrimary = Color(0xFFF4F1DE); // Cloud White
+  static const Color textSecondary = Color(0xFF8D99AE); // Slate Grey
 
   static ThemeData darkTheme() {
     return ThemeData.dark().copyWith(
@@ -22,47 +15,51 @@ class AppTheme {
       primaryColor: primaryColor,
       colorScheme: const ColorScheme.dark(
         primary: primaryColor,
-        secondary: accentColor,
+        secondary: primaryColor,
         surface: surfaceDark,
       ),
       appBarTheme: AppBarTheme(
-        backgroundColor: surfaceDark,
+        backgroundColor: backgroundDark,
         elevation: 0,
-        centerTitle: false, // Tactical aligned
-        iconTheme: const IconThemeData(color: Colors.white, size: 24),
-        titleTextStyle: GoogleFonts.shareTechMono(
-          fontSize: 22,
-          fontWeight: FontWeight.bold,
-          color: primaryColor,
-          letterSpacing: 2.0,
+        centerTitle: false,
+        iconTheme: const IconThemeData(color: textPrimary, size: 24),
+        titleTextStyle: GoogleFonts.outfit(
+          fontSize: 28,
+          fontWeight: FontWeight.w900,
+          color: textPrimary,
+          letterSpacing: -0.5,
         ),
       ),
       textTheme: TextTheme(
-        displayLarge: GoogleFonts.shareTechMono(fontSize: 32, fontWeight: FontWeight.bold, color: textPrimary),
-        displayMedium: GoogleFonts.shareTechMono(fontSize: 24, fontWeight: FontWeight.bold, color: textPrimary),
-        bodyLarge: GoogleFonts.jetBrainsMono(fontSize: 14, color: textPrimary, fontWeight: FontWeight.w400),
-        bodyMedium: GoogleFonts.jetBrainsMono(fontSize: 12, color: textSecondary),
+        displayLarge: GoogleFonts.outfit(fontSize: 48, fontWeight: FontWeight.w900, color: textPrimary, letterSpacing: -1.5),
+        displayMedium: GoogleFonts.outfit(fontSize: 32, fontWeight: FontWeight.w800, color: textPrimary, letterSpacing: -1.0),
+        bodyLarge: GoogleFonts.outfit(fontSize: 16, color: textPrimary, fontWeight: FontWeight.w500),
+        bodyMedium: GoogleFonts.outfit(fontSize: 14, color: textSecondary),
       ),
       tabBarTheme: TabBarThemeData(
         indicatorColor: primaryColor,
         labelColor: primaryColor,
         unselectedLabelColor: textSecondary,
-        indicatorSize: TabBarIndicatorSize.tab,
-        labelStyle: GoogleFonts.shareTechMono(fontSize: 16, fontWeight: FontWeight.bold),
-        unselectedLabelStyle: GoogleFonts.shareTechMono(fontSize: 14, fontWeight: FontWeight.normal),
+        indicatorSize: TabBarIndicatorSize.label,
+        labelStyle: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w900, letterSpacing: 1),
+        unselectedLabelStyle: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.bold),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent,
-          foregroundColor: primaryColor,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.zero, // Tactical sharp
-            side: const BorderSide(color: primaryColor, width: 2),
+          backgroundColor: primaryColor,
+          foregroundColor: backgroundDark,
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero, // Sharpest
           ),
-          textStyle: GoogleFonts.shareTechMono(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 2),
+          textStyle: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1),
           elevation: 0,
         ),
+      ),
+      dividerTheme: const DividerThemeData(
+        color: Colors.white12,
+        thickness: 1,
+        space: 1,
       ),
     );
   }

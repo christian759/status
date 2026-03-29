@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 import '../models/status_file.dart';
 import '../utils/permission_util.dart';
@@ -9,6 +11,7 @@ class StatusProvider with ChangeNotifier {
   List<StatusFile> _videos = [];
   List<StatusFile> _savedStatuses = [];
   List<String> _selectedPaths = [];
+  final Map<String, String> _thumbnailCache = {};
   bool _isLoading = false;
   bool _permissionGranted = false;
   String _errorMessage = '';
@@ -62,21 +65,26 @@ class StatusProvider with ChangeNotifier {
     for (String path in _whatsappPaths) {
       final directory = Directory(path);
       if (directory.existsSync()) {
-        final items = directory.listSync();
-        for (var item in items) {
-          if (item is File) {
-            if (item.path.endsWith('.mp4')) {
-              _videos.add(StatusFile(path: item.path, isVideo: true));
-            } else if (item.path.endsWith('.jpg') || item.path.endsWith('.jpeg') || item.path.endsWith('.png')) {
-              _images.add(StatusFile(path: item.path, isVideo: false));
+        try {
+          final items = directory.listSync();
+          for (var item in items) {
+            if (item is File) {
+              final fileName = item.path.toLowerCase();
+              if (fileName.endsWith('.mp4')) {
+                _videos.add(StatusFile(path: item.path, isVideo: true));
+              } else if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg') || fileName.endsWith('.png')) {
+                _images.add(StatusFile(path: item.path, isVideo: false));
+              }
             }
           }
+        } catch (e) {
+          debugPrint('Error listing directory: $e');
         }
       }
     }
 
     if (_images.isEmpty && _videos.isEmpty) {
-      _errorMessage = 'No statuses found. Please view some statuses in WhatsApp first.';
+      _errorMessage = 'No statuses found. Please view some in WhatsApp first.';
     }
 
     _isLoading = false;
@@ -90,15 +98,41 @@ class StatusProvider with ChangeNotifier {
       final items = directory.listSync();
       for (var item in items) {
         if (item is File && !item.path.contains('.nomedia')) {
-          if (item.path.endsWith('.mp4')) {
+          final fileName = item.path.toLowerCase();
+          if (fileName.endsWith('.mp4')) {
             _savedStatuses.add(StatusFile(path: item.path, isVideo: true));
-          } else if (item.path.endsWith('.jpg') || item.path.endsWith('.jpeg') || item.path.endsWith('.png')) {
+          } else if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg') || fileName.endsWith('.png')) {
             _savedStatuses.add(StatusFile(path: item.path, isVideo: false));
           }
         }
       }
     }
     notifyListeners();
+  }
+
+  Future<String?> getThumbnail(String videoPath) async {
+    if (_thumbnailCache.containsKey(videoPath)) {
+      return _thumbnailCache[videoPath];
+    }
+
+    try {
+      final tempDir = await getTemporaryDirectory();
+      final thumbnail = await VideoThumbnail.thumbnailFile(
+        video: videoPath,
+        thumbnailPath: tempDir.path,
+        imageFormat: ImageFormat.JPEG,
+        maxWidth: 256,
+        quality: 50,
+      );
+
+      if (thumbnail != null) {
+        _thumbnailCache[videoPath] = thumbnail;
+        return thumbnail;
+      }
+    } catch (e) {
+      debugPrint('Error generating thumbnail: $e');
+    }
+    return null;
   }
 
   Future<bool> saveStatus(String sourcePath) async {
@@ -114,7 +148,7 @@ class StatusProvider with ChangeNotifier {
       final sourceFile = File(sourcePath);
       await sourceFile.copy(savedFilePath);
       
-      await fetchSavedStatuses(); // Refresh saved list
+      await fetchSavedStatuses();
       return true;
     } catch (e) {
       return false;

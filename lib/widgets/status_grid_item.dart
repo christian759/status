@@ -56,7 +56,7 @@ class StatusGridItem extends StatelessWidget {
           borderRadius: BorderRadius.zero,
           border: Border.all(
             color: isSelected ? Theme.of(context).primaryColor : Colors.white12,
-            width: isSelected ? 2 : 1,
+            width: isSelected ? 3 : 1,
           ),
         ),
         child: Stack(
@@ -72,63 +72,36 @@ class StatusGridItem extends StatelessWidget {
                     ),
             ),
             
-            // Tactical Overlay for Videos
+            // Minimalist Video Indicator
             if (statusFile.isVideo)
               Positioned(
-                top: 8,
-                left: 8,
+                bottom: 0,
+                right: 0,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  color: Theme.of(context).primaryColor.withValues(alpha: 0.9),
-                  child: const Text(
-                    'VID',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1,
-                    ),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  color: Theme.of(context).primaryColor,
+                  child: const Icon(
+                    Icons.play_arrow_rounded,
+                    color: Colors.black,
+                    size: 16,
                   ),
                 ),
               ),
 
-              if (statusFile.isVideo)
-                const Center(
-                  child: Icon(
-                    Icons.play_arrow_rounded,
-                    color: Colors.white70,
-                    size: 40,
-                  ),
-                ),
-
-            // Selection Overlay
+            // Selection Overlay (Solid)
             if (isSelected)
               Container(
-                color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
+                color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
                 child: Center(
                   child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                      shape: BoxShape.rectangle,
-                    ),
+                    padding: const EdgeInsets.all(8),
+                    color: Theme.of(context).primaryColor,
                     child: const Icon(
-                      Icons.check,
+                      Icons.check_rounded,
                       color: Colors.black,
                       size: 32,
                     ),
                   ),
-                ),
-              ),
-            
-            // Tactical Corner Accents
-            if (isSelected)
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: CustomPaint(
-                  size: const Size(20, 20),
-                  painter: _TacticalCornerPainter(color: Theme.of(context).primaryColor),
                 ),
               ),
           ],
@@ -145,14 +118,10 @@ class _VideoThumbnailWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<StatusProvider>(context, listen: false);
+    
     return FutureBuilder<String?>(
-      future: getTemporaryDirectory().then((tempDir) => VideoThumbnail.thumbnailFile(
-        video: videoPath,
-        thumbnailPath: tempDir.path,
-        imageFormat: ImageFormat.JPEG,
-        maxWidth: 256,
-        quality: 50,
-      )),
+      future: provider.getThumbnail(videoPath),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done && snapshot.hasData && snapshot.data != null) {
           return Image.file(
@@ -165,35 +134,12 @@ class _VideoThumbnailWidget extends StatelessWidget {
           color: Colors.black26,
           child: Center(
             child: CircularProgressIndicator(
-              strokeWidth: 1,
-              valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor.withValues(alpha: 0.3)),
+              strokeWidth: 2,
+              valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor.withValues(alpha: 0.1)),
             ),
           ),
         );
       },
     );
   }
-}
-
-class _TacticalCornerPainter extends CustomPainter {
-  final Color color;
-  _TacticalCornerPainter({required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = 3
-      ..style = PaintingStyle.stroke;
-
-    final path = Path()
-      ..moveTo(size.width, 0)
-      ..lineTo(size.width, size.height)
-      ..lineTo(0, size.height);
-    
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }

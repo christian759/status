@@ -80,6 +80,7 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
           ),
           
           // Bottom Actions
+          // Bottom Actions
           Positioned(
             bottom: 40,
             left: 40,
@@ -121,17 +122,17 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
-                            isSaved ? Icons.verified_user_rounded : Icons.save_rounded,
+                            isSaved ? Icons.verified_user_rounded : Icons.arrow_downward_rounded,
                             color: isSaved ? Theme.of(context).primaryColor : Colors.black,
                             size: 24,
                           ),
                           const SizedBox(width: 12),
                           Text(
                             isSaved ? 'SECURED' : 'EXTRACT',
-                            style: GoogleFonts.shareTechMono(
+                            style: GoogleFonts.outfit(
                               color: isSaved ? Theme.of(context).primaryColor : Colors.black,
                               fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w900,
                               letterSpacing: 2.0,
                             ),
                           ),
