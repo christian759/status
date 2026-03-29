@@ -28,63 +28,43 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
-        fit: StackFit.expand,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share_rounded, color: Colors.white),
+            onPressed: () {
+              Share.shareXFiles([XFile(widget.statusFile.path)], text: 'Check out this status!');
+            },
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
+      body: Column(
         children: [
           // The Image (with Hero)
-          Hero(
-            tag: widget.statusFile.path,
-            child: InteractiveViewer(
-              minScale: 1.0,
-              maxScale: 4.0,
-              child: Image.file(
-                File(widget.statusFile.path),
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
-          
-          // Glassmorphic App Bar Area
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top, left: 8, right: 8, bottom: 16),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.black.withValues(alpha: 0.7),
-                    Colors.transparent,
-                  ],
+          Expanded(
+            child: Hero(
+              tag: widget.statusFile.path,
+              child: InteractiveViewer(
+                minScale: 1.0,
+                maxScale: 4.0,
+                child: Image.file(
+                  File(widget.statusFile.path),
+                  fit: BoxFit.contain,
                 ),
               ),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    icon: const Icon(Icons.share_rounded, color: Colors.white),
-                    onPressed: () {
-                      Share.shareXFiles([XFile(widget.statusFile.path)], text: 'Check out this status!');
-                    },
-                  ),
-                ],
-              ),
             ),
           ),
           
-          // Bottom Actions
-          // Bottom Actions
-          Positioned(
-            bottom: 40,
-            left: 40,
-            right: 40,
+          // Action Area
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 40),
             child: Consumer<StatusProvider>(
               builder: (context, provider, child) {
                 final isSaved = provider.savedStatuses.any((s) => s.path.endsWith(widget.statusFile.path.split('/').last));
