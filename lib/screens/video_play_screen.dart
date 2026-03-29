@@ -20,7 +20,7 @@ class VideoPlayScreen extends StatefulWidget {
 }
 
 class _VideoPlayScreenState extends State<VideoPlayScreen> {
-  late VideoPlayerController _videoPlayerController;
+  VideoPlayerController? _videoPlayerController;
   ChewieController? _chewieController;
 
   @override
@@ -31,36 +31,43 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
   }
 
   Future<void> _initializePlayer() async {
-    _videoPlayerController = VideoPlayerController.file(File(widget.statusFile.path));
-    await _videoPlayerController.initialize();
+    try {
+      final controller = VideoPlayerController.file(File(widget.statusFile.path));
+      await controller.initialize();
 
-    _chewieController = ChewieController(
-      videoPlayerController: _videoPlayerController,
-      autoPlay: true,
-      looping: true,
-      showControls: true,
-      materialProgressColors: ChewieProgressColors(
-        playedColor: Theme.of(context).primaryColor,
-        handleColor: Theme.of(context).primaryColor,
-        backgroundColor: Colors.white24,
-        bufferedColor: Colors.white54,
-      ),
-      autoInitialize: true,
-      errorBuilder: (context, errorMessage) {
-        return Center(
-          child: Text(
-            errorMessage,
-            style: const TextStyle(color: Colors.white),
-          ),
-        );
-      },
-    );
-    setState(() {});
+      if (!mounted) return;
+
+      _videoPlayerController = controller;
+      _chewieController = ChewieController(
+        videoPlayerController: controller,
+        autoPlay: true,
+        looping: true,
+        showControls: true,
+        materialProgressColors: ChewieProgressColors(
+          playedColor: Theme.of(context).primaryColor,
+          handleColor: Theme.of(context).primaryColor,
+          backgroundColor: Colors.white24,
+          bufferedColor: Colors.white54,
+        ),
+        autoInitialize: true,
+        errorBuilder: (context, errorMessage) {
+          return Center(
+            child: Text(
+              errorMessage,
+              style: const TextStyle(color: Colors.white),
+            ),
+          );
+        },
+      );
+      setState(() {});
+    } catch (e) {
+      debugPrint('Error initializing video player: $e');
+    }
   }
 
   @override
   void dispose() {
-    _videoPlayerController.dispose();
+    _videoPlayerController?.dispose();
     _chewieController?.dispose();
     super.dispose();
   }
@@ -94,22 +101,26 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Container(
-                  decoration: ShapeDecoration(
-                    shape: BeveledRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
-                      side: const BorderSide(color: Colors.white10, width: 1),
-                    ),
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.white10, width: 1),
                   ),
                   clipBehavior: Clip.antiAlias,
-                  child: _chewieController != null && _chewieController!.videoPlayerController.value.isInitialized
+                  child: _chewieController != null
                       ? Chewie(controller: _chewieController!)
-                      : CircularProgressIndicator(color: Theme.of(context).primaryColor, strokeWidth: 2),
+                      : Center(
+                          child: CircularProgressIndicator(
+                            color: Theme.of(context).primaryColor,
+                            strokeWidth: 2,
+                          ),
+                        ),
                 ),
               ),
             ),
           ),
           
-          // Action Area (No Overlay)
+          // Action Area
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 40),
             child: Consumer<StatusProvider>(
@@ -119,16 +130,15 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
                 return AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
                   height: 60,
-                  decoration: ShapeDecoration(
+                  decoration: BoxDecoration(
                     color: isSaved ? Colors.black : Theme.of(context).primaryColor,
-                    shape: BeveledRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      side: BorderSide(color: Theme.of(context).primaryColor, width: 2),
-                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Theme.of(context).primaryColor, width: 2),
                   ),
                   child: Material(
                     color: Colors.transparent,
                     child: InkWell(
+                      borderRadius: BorderRadius.circular(12),
                       onTap: isSaved ? null : () {
                         final navigator = Navigator.of(context);
                         AdHelper.showInterstitialAd(
@@ -158,9 +168,9 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
                           const SizedBox(width: 12),
                           Text(
                             isSaved ? 'SECURED' : 'EXTRACT',
-                            style: GoogleFonts.staatliches(
+                            style: GoogleFonts.outfit(
                               color: isSaved ? Theme.of(context).primaryColor : Colors.black,
-                              fontSize: 20,
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 2.0,
                             ),

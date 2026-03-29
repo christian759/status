@@ -2,85 +2,83 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  static const Color obsidian = Color(0xFF050505);
-  static const Color graphite = Color(0xFF101010);
-  static const Color bronze = Color(0xFFCD7F32);
-  static const Color cloudWhite = Color(0xFFF4F1DE);
+  static const Color pureBlack = Color(0xFF000000);
+  static const Color charcoal = Color(0xFF121212);
+  static const Color electricOrange = Color(0xFFFF6B00);
+  static const Color pureWhite = Color(0xFFFFFFFF);
 
   static ThemeData darkTheme() {
     return ThemeData.dark().copyWith(
-      scaffoldBackgroundColor: obsidian,
-      primaryColor: bronze,
+      scaffoldBackgroundColor: pureBlack,
+      primaryColor: electricOrange,
       colorScheme: const ColorScheme.dark(
-        primary: bronze,
-        secondary: bronze,
-        surface: graphite,
+        primary: electricOrange,
+        secondary: electricOrange,
+        surface: charcoal,
+        onSurface: pureWhite,
       ),
       appBarTheme: AppBarTheme(
-        backgroundColor: obsidian,
+        backgroundColor: pureBlack,
         elevation: 0,
         centerTitle: false,
-        iconTheme: const IconThemeData(color: bronze, size: 24),
-        titleTextStyle: GoogleFonts.staatliches(
-          fontSize: 32,
+        iconTheme: const IconThemeData(color: pureWhite, size: 24),
+        titleTextStyle: GoogleFonts.outfit(
+          fontSize: 22,
           fontWeight: FontWeight.bold,
-          color: bronze,
-          letterSpacing: 2.0,
+          color: pureWhite,
+          letterSpacing: 1.0,
         ),
       ),
       textTheme: TextTheme(
-        displayLarge: GoogleFonts.staatliches(
-          fontSize: 80,
-          fontWeight: FontWeight.bold,
-          color: bronze,
-          letterSpacing: 4.0,
-        ),
-        displayMedium: GoogleFonts.staatliches(
+        displayLarge: GoogleFonts.outfit(
           fontSize: 48,
-          fontWeight: FontWeight.bold,
-          color: cloudWhite,
-          letterSpacing: 2.0,
-          height: 1.1,
+          fontWeight: FontWeight.w900,
+          color: pureWhite,
+          letterSpacing: -1.0,
         ),
-        headlineMedium: GoogleFonts.staatliches(
-          fontSize: 28,
+        displayMedium: GoogleFonts.outfit(
+          fontSize: 32,
           fontWeight: FontWeight.bold,
-          color: bronze,
-          letterSpacing: 1.5,
+          color: pureWhite,
         ),
-        bodyLarge: GoogleFonts.spaceGrotesk(
+        headlineMedium: GoogleFonts.outfit(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: electricOrange,
+        ),
+        bodyLarge: GoogleFonts.outfit(
           fontSize: 16,
-          color: cloudWhite,
-          fontWeight: FontWeight.w600,
+          color: pureWhite,
+          fontWeight: FontWeight.w500,
         ),
-        bodyMedium: GoogleFonts.spaceGrotesk(
+        bodyMedium: GoogleFonts.outfit(
           fontSize: 14,
-          color: Colors.white60,
+          color: Colors.white70,
         ),
       ),
       tabBarTheme: TabBarThemeData(
-        labelColor: bronze,
+        labelColor: electricOrange,
         unselectedLabelColor: Colors.white24,
         indicatorSize: TabBarIndicatorSize.label,
-        labelStyle: GoogleFonts.staatliches(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 1.5),
-        unselectedLabelStyle: GoogleFonts.staatliches(fontSize: 18),
+        labelStyle: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 1),
+        unselectedLabelStyle: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.bold),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: bronze,
-          foregroundColor: obsidian,
-          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-          shape: BeveledRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+          backgroundColor: electricOrange,
+          foregroundColor: pureBlack,
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
-          textStyle: GoogleFonts.staatliches(fontSize: 20, fontWeight: FontWeight.bold, letterSpacing: 2),
-          elevation: 10,
+          textStyle: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1),
+          elevation: 0,
         ),
       ),
       dividerTheme: const DividerThemeData(
         color: Colors.white10,
-        thickness: 2,
-        space: 2,
+        thickness: 1,
+        space: 1,
       ),
     );
   }

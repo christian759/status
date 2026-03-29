@@ -38,38 +38,30 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) => [
           SliverAppBar(
-            expandedHeight: 180,
+            expandedHeight: 140,
             floating: false,
             pinned: true,
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             flexibleSpace: FlexibleSpaceBar(
-              titlePadding: const EdgeInsets.only(left: 20, bottom: 60),
+              titlePadding: const EdgeInsets.only(left: 16, bottom: 16),
               title: Text(
                 provider.isSelectionMode
-                    ? '${provider.selectedPaths.length} ASSETS'
+                    ? '${provider.selectedPaths.length} SELECTED'
                     : 'ARCHIVE',
-                style: GoogleFonts.staatliches(
-                  fontSize: 32,
-                  color: Theme.of(context).primaryColor,
-                  letterSpacing: 4,
+                style: GoogleFonts.outfit(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: provider.isSelectionMode ? Theme.of(context).primaryColor : Colors.white,
+                  letterSpacing: 2,
                 ),
               ),
               background: Container(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                child: Stack(
-                  children: [
-                    Positioned(
-                      right: -20,
-                      top: 40,
-                      child: Text(
-                        '0X',
-                        style: GoogleFonts.staatliches(
-                          fontSize: 180,
-                          color: Colors.white.withValues(alpha: 0.03),
-                        ),
-                      ),
-                    ),
-                  ],
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.black, Colors.black87],
+                  ),
                 ),
               ),
             ),
@@ -168,30 +160,32 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         await provider.fetchSavedStatuses();
       },
       child: AnimationLimiter(
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: MasonryGridView.count(
+        child: GridView.builder(
+          padding: const EdgeInsets.all(12),
+          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            mainAxisSpacing: 12,
             crossAxisSpacing: 12,
-            itemCount: statuses.length,
-            itemBuilder: (context, index) {
-              return AnimationConfiguration.staggeredGrid(
-                position: index,
-                duration: const Duration(milliseconds: 500),
-                columnCount: 2,
-                child: FadeInAnimation(
-                  child: ScaleAnimation(
-                    scale: 0.9,
-                    child: StatusGridItem(
-                      statusFile: statuses[index],
-                      key: ValueKey(statuses[index].path),
-                    ),
+            mainAxisSpacing: 12,
+            childAspectRatio: 1.0,
+          ),
+          itemCount: statuses.length,
+          itemBuilder: (context, index) {
+            return AnimationConfiguration.staggeredGrid(
+              position: index,
+              duration: const Duration(milliseconds: 400),
+              columnCount: 2,
+              child: FadeInAnimation(
+                child: ScaleAnimation(
+                  scale: 0.95,
+                  child: StatusGridItem(
+                    statusFile: statuses[index],
+                    key: ValueKey(statuses[index].path),
                   ),
                 ),
-              );
-            },
-          ),
+              ),
+            );
+          },
         ),
       ),
     );

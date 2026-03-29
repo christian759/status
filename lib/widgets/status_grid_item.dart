@@ -38,19 +38,18 @@ class StatusGridItem extends StatelessWidget {
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        decoration: ShapeDecoration(
-          shape: BeveledRectangleBorder(
-            borderRadius: BorderRadius.circular(isSelected ? 16 : 8),
-            side: BorderSide(
-              color: isSelected ? Theme.of(context).primaryColor : Colors.white10,
-              width: isSelected ? 3 : 1,
-            ),
+        decoration: BoxDecoration(
+          color: Colors.black,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? Theme.of(context).primaryColor : Colors.white10,
+            width: isSelected ? 3 : 1,
           ),
-          shadows: isSelected ? [
+          boxShadow: isSelected ? [
             BoxShadow(
               color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
-              blurRadius: 15,
-              spreadRadius: -2,
+              blurRadius: 12,
+              spreadRadius: 2,
             )
           ] : [],
         ),
@@ -68,33 +67,32 @@ class StatusGridItem extends StatelessWidget {
                     ),
             ),
             
-            // Texture Overlay
+            // Subtle Gradient Overlay
             Positioned.fill(
               child: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
                     colors: [
-                      Colors.white.withValues(alpha: 0.05),
                       Colors.transparent,
-                      Colors.black.withValues(alpha: 0.2),
+                      Colors.black.withValues(alpha: 0.4),
                     ],
                   ),
                 ),
               ),
             ),
 
-            // Video Indicator
+            // Video Play Indicator
             if (statusFile.isVideo)
               Positioned(
-                top: 10,
-                right: 10,
+                top: 8,
+                right: 8,
                 child: Container(
                   padding: const EdgeInsets.all(6),
-                  decoration: ShapeDecoration(
+                  decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor,
-                    shape: BeveledRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(
                     Icons.play_arrow_rounded,
@@ -104,16 +102,16 @@ class StatusGridItem extends StatelessWidget {
                 ),
               ),
 
-            // Selection Check (Obsidian style)
+            // Selection Checkmark
             if (isSelected)
               Positioned(
-                left: 10,
-                top: 10,
+                left: 8,
+                top: 8,
                 child: Container(
                   padding: const EdgeInsets.all(4),
-                  decoration: const ShapeDecoration(
+                  decoration: const BoxDecoration(
                     color: Colors.black,
-                    shape: CircleBorder(),
+                    shape: BoxShape.circle,
                   ),
                   child: Icon(
                     Icons.check_rounded,
