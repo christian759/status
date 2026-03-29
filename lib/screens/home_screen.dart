@@ -45,9 +45,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             flexibleSpace: FlexibleSpaceBar(
               titlePadding: const EdgeInsets.only(left: 16, bottom: 16),
               title: Text(
-                provider.isSelectionMode
                     ? '${provider.selectedPaths.length} SELECTED'
-                    : 'ARCHIVE',
+                    : 'STATUSES',
                 style: GoogleFonts.outfit(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -81,10 +80,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         if (mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('$count ASSETS SECURED'),
+                              content: Text('$count STATUSES SAVED'),
                               backgroundColor: Theme.of(context).primaryColor,
                               behavior: SnackBarBehavior.floating,
-                              shape: BeveledRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                             ),
                           );
                         }
@@ -140,11 +139,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'VOID',
-              style: GoogleFonts.staatliches(
+              'EMPTY',
+              style: GoogleFonts.outfit(
                 color: Colors.white.withValues(alpha: 0.05),
-                fontSize: 100,
-                letterSpacing: 10,
+                fontSize: 80,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ],

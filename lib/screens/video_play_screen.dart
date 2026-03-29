@@ -167,7 +167,7 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
                           ),
                           const SizedBox(width: 12),
                           Text(
-                            isSaved ? 'SECURED' : 'EXTRACT',
+                            isSaved ? 'SAVED' : 'SAVE',
                             style: GoogleFonts.outfit(
                               color: isSaved ? Theme.of(context).primaryColor : Colors.black,
                               fontSize: 18,

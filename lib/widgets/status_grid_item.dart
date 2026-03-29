@@ -141,7 +141,7 @@ class _VideoThumbnailWidget extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done && snapshot.hasData && snapshot.data != null) {
           return Image.file(
-            File(snapshot.data!),
+            File(snapshot.data ?? ''),
             fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) => Container(color: Colors.black),
           );
@@ -151,7 +151,7 @@ class _VideoThumbnailWidget extends StatelessWidget {
           child: Center(
             child: CircularProgressIndicator(
               strokeWidth: 2,
-              valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor.withValues(alpha: 0.1)),
+              valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor.withOpacity(0.1)),
             ),
           ),
         );

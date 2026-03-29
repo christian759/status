@@ -20,7 +20,7 @@ class PermissionScreen extends StatelessWidget {
               children: [
                 const SizedBox(height: 20),
                 Text(
-                  'STATUS\nARCHIVE',
+                  'STATUS\nSAVER',
                   style: Theme.of(context).textTheme.displayLarge,
                 ),
                 const SizedBox(height: 16),
@@ -35,7 +35,7 @@ class PermissionScreen extends StatelessWidget {
                 const SizedBox(height: 48),
                 
                 Text(
-                  'PREMIUM MEDIA RECOVERY.',
+                  'SAVE YOUR STATUSES.',
                   style: GoogleFonts.outfit(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -45,7 +45,7 @@ class PermissionScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'EXTRACT AND SECURE HIGH-RESOLUTION STATUS MEDIA DIRECTLY FROM YOUR DEVICE STORAGE.',
+                  'DOWNLOAD AND SAVE WHATSAPP STATUS VIDEOS AND IMAGES DIRECTLY TO YOUR GALLERY.',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     height: 1.5,
                     color: Colors.white,
@@ -60,7 +60,7 @@ class PermissionScreen extends StatelessWidget {
                     builder: (context, provider, child) {
                       return ElevatedButton(
                         onPressed: () => provider.requestPermission(),
-                        child: const Text('INITIALIZE ACCESS'),
+                        child: const Text('ALLOW ACCESS'),
                       );
                     },
                   ),

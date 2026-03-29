@@ -74,13 +74,13 @@ class _SuccessScreenState extends State<SuccessScreen> with SingleTickerProvider
                           
                           // Success Text
                           Text(
-                            'MEDIA\nSECURED',
+                            'SUCCESSFULLY\nSAVED',
                             textAlign: TextAlign.center,
                             style: Theme.of(context).textTheme.displayMedium,
                           ),
                           const SizedBox(height: 24),
                           Text(
-                            'THE SELECTED ASSETS HAVE BEEN SUCCESSFULLY EXTRACTED TO YOUR GALLERY.',
+                            'THE STATUS HAS BEEN SAVED TO YOUR GALLERY.',
                             textAlign: TextAlign.center,
                             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                               letterSpacing: 0.5,

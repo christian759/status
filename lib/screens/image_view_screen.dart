@@ -119,7 +119,7 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
                           ),
                           const SizedBox(width: 12),
                           Text(
-                            isSaved ? 'SECURED' : 'EXTRACT',
+                            isSaved ? 'SAVED' : 'SAVE',
                             style: GoogleFonts.outfit(
                               color: isSaved ? Theme.of(context).primaryColor : Colors.black,
                               fontSize: 18,
