@@ -45,6 +45,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             flexibleSpace: FlexibleSpaceBar(
               titlePadding: const EdgeInsets.only(left: 16, bottom: 16),
               title: Text(
+                provider.isSelectionMode
                     ? '${provider.selectedPaths.length} SELECTED'
                     : 'STATUSES',
                 style: GoogleFonts.outfit(
@@ -109,25 +110,32 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         ],
         body: Consumer<StatusProvider>(
           builder: (context, provider, child) {
-            if (provider.isLoading) {
-              return Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
-                  strokeWidth: 2,
-                ),
-              );
-            }
-
-            return TabBarView(
-              controller: _tabController,
+            return Stack(
               children: [
-                _buildGrid(provider, provider.images),
-                _buildGrid(provider, provider.videos),
-                _buildGrid(provider, provider.savedStatuses),
+                TabBarView(
+                  controller: _tabController,
+                  children: [
+                    _buildGrid(provider, provider.images),
+                    _buildGrid(provider, provider.videos),
+                    _buildGrid(provider, provider.savedStatuses),
+                  ],
+                ),
+                if (provider.isLoading)
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: LinearProgressIndicator(
+                      backgroundColor: Colors.transparent,
+                      valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+                      minHeight: 2,
+                    ),
+                  ),
               ],
             );
           },
         ),
+
       ),
     );
   }

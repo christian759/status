@@ -107,7 +107,7 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
                     border: Border.all(color: Colors.white10, width: 1),
                   ),
                   clipBehavior: Clip.antiAlias,
-                  child: _chewieController != null
+                  child: _chewieController != null && _videoPlayerController != null && _videoPlayerController!.value.isInitialized
                       ? Chewie(controller: _chewieController!)
                       : Center(
                           child: CircularProgressIndicator(
@@ -115,6 +115,7 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
                             strokeWidth: 2,
                           ),
                         ),
+
                 ),
               ),
             ),

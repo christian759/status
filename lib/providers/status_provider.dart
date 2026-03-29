@@ -36,20 +36,26 @@ class StatusProvider with ChangeNotifier {
   Future<void> init() async {
     _permissionGranted = await PermissionUtil.requestStoragePermission();
     if (_permissionGranted) {
-      await fetchStatuses();
-      await fetchSavedStatuses();
+      // Background these so the UI can show immediately
+      Future.wait([
+        fetchStatuses(),
+        fetchSavedStatuses(),
+      ]);
     } else {
       _errorMessage = 'Storage permission is required to view statuses.';
     }
     notifyListeners();
   }
 
+
   Future<void> requestPermission() async {
     _permissionGranted = await PermissionUtil.requestStoragePermission();
     if (_permissionGranted) {
       _errorMessage = '';
-      await fetchStatuses();
-      await fetchSavedStatuses();
+      await Future.wait([
+        fetchStatuses(),
+        fetchSavedStatuses(),
+      ]);
     }
     notifyListeners();
   }
@@ -62,12 +68,12 @@ class StatusProvider with ChangeNotifier {
     _images = [];
     _videos = [];
 
-    for (String path in _whatsappPaths) {
+    await Future.wait(_whatsappPaths.map((path) async {
       final directory = Directory(path);
       if (directory.existsSync()) {
         try {
-          final items = directory.listSync();
-          for (var item in items) {
+          final items = directory.list();
+          await for (var item in items) {
             if (item is File) {
               final fileName = item.path.toLowerCase();
               if (fileName.endsWith('.mp4')) {
@@ -78,10 +84,11 @@ class StatusProvider with ChangeNotifier {
             }
           }
         } catch (e) {
-          debugPrint('Error listing directory: $e');
+          debugPrint('Error listing directory $path: $e');
         }
       }
-    }
+    }));
+
 
     if (_images.isEmpty && _videos.isEmpty) {
       _errorMessage = 'No statuses found. Please view some in WhatsApp first.';
@@ -95,16 +102,20 @@ class StatusProvider with ChangeNotifier {
     final directory = Directory('/storage/emulated/0/Pictures/StatusSaver');
     _savedStatuses = [];
     if (directory.existsSync()) {
-      final items = directory.listSync();
-      for (var item in items) {
-        if (item is File && !item.path.contains('.nomedia')) {
-          final fileName = item.path.toLowerCase();
-          if (fileName.endsWith('.mp4')) {
-            _savedStatuses.add(StatusFile(path: item.path, isVideo: true));
-          } else if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg') || fileName.endsWith('.png')) {
-            _savedStatuses.add(StatusFile(path: item.path, isVideo: false));
+      try {
+        final items = directory.list();
+        await for (var item in items) {
+          if (item is File && !item.path.contains('.nomedia')) {
+            final fileName = item.path.toLowerCase();
+            if (fileName.endsWith('.mp4')) {
+              _savedStatuses.add(StatusFile(path: item.path, isVideo: true));
+            } else if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg') || fileName.endsWith('.png')) {
+              _savedStatuses.add(StatusFile(path: item.path, isVideo: false));
+            }
           }
         }
+      } catch (e) {
+        debugPrint('Error listing saved statuses: $e');
       }
     }
     notifyListeners();

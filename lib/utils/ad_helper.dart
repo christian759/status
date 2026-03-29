@@ -55,9 +55,10 @@ class AdHelper {
   }
 
   static void showInterstitialAd({required Function onAdClosed}) {
-    if (_isInterstitialAdReady && _interstitialAd != null) {
+    final ad = _interstitialAd;
+    if (_isInterstitialAdReady && ad != null) {
       // Temporarily override the callback to trigger our specific logic when the user closes this specific ad
-      _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+      ad.fullScreenContentCallback = FullScreenContentCallback(
         onAdDismissedFullScreenContent: (ad) {
           ad.dispose();
           _isInterstitialAdReady = false;
@@ -72,13 +73,16 @@ class AdHelper {
         },
       );
       
-      _interstitialAd!.show();
+      ad.show();
     } else {
-      // If ad isn't ready, just proceed
+      // If ad isn't ready or already shown/disposed, just proceed
       debugPrint('Ad not ready, proceeding anyway');
       onAdClosed();
-      // Try to load one for next time
-      loadInterstitialAd();
+      // Try to load one for next time if not already loading
+      if (!_isInterstitialAdReady) {
+        loadInterstitialAd();
+      }
     }
   }
+
 }

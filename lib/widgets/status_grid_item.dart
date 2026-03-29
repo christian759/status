@@ -42,12 +42,12 @@ class StatusGridItem extends StatelessWidget {
           color: Colors.black,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? Theme.of(context).primaryColor : Colors.white10,
+            color: isSelected ? (Theme.of(context).primaryColor) : Colors.white10,
             width: isSelected ? 3 : 1,
           ),
           boxShadow: isSelected ? [
             BoxShadow(
-              color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
+              color: (Theme.of(context).primaryColor).withOpacity(0.3),
               blurRadius: 12,
               spreadRadius: 2,
             )
@@ -76,12 +76,13 @@ class StatusGridItem extends StatelessWidget {
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.transparent,
-                      Colors.black.withValues(alpha: 0.4),
+                      Colors.black.withOpacity(0.4),
                     ],
                   ),
                 ),
               ),
             ),
+
 
             // Video Play Indicator
             if (statusFile.isVideo)
