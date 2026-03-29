@@ -19,46 +19,42 @@ class StatusGridItem extends StatelessWidget {
     final isSelected = provider.isSelected(statusFile.path);
 
     return GestureDetector(
-      onLongPress: () {
-        provider.toggleSelection(statusFile.path);
-      },
+      onLongPress: () => provider.toggleSelection(statusFile.path),
       onTap: () {
         if (provider.isSelectionMode) {
           provider.toggleSelection(statusFile.path);
         } else {
-          if (statusFile.isVideo) {
-            Navigator.push(
-              context,
-              PageRouteBuilder(
-                pageBuilder: (context, animation, secondaryAnimation) => VideoPlayScreen(statusFile: statusFile),
-                transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                  return FadeTransition(opacity: animation, child: child);
-                },
-              ),
-            );
-          } else {
-            Navigator.push(
-              context,
-              PageRouteBuilder(
-                pageBuilder: (context, animation, secondaryAnimation) => ImageViewScreen(statusFile: statusFile),
-                transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                  return FadeTransition(opacity: animation, child: child);
-                },
-              ),
-            );
-          }
+          Navigator.push(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) => 
+                statusFile.isVideo ? VideoPlayScreen(statusFile: statusFile) : ImageViewScreen(statusFile: statusFile),
+              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+            ),
+          );
         }
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        decoration: BoxDecoration(
-          color: Colors.black,
-          borderRadius: BorderRadius.zero,
-          border: Border.all(
-            color: isSelected ? Theme.of(context).primaryColor : Colors.white12,
-            width: isSelected ? 3 : 1,
+        decoration: ShapeDecoration(
+          shape: BeveledRectangleBorder(
+            borderRadius: BorderRadius.circular(isSelected ? 16 : 8),
+            side: BorderSide(
+              color: isSelected ? Theme.of(context).primaryColor : Colors.white10,
+              width: isSelected ? 3 : 1,
+            ),
           ),
+          shadows: isSelected ? [
+            BoxShadow(
+              color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
+              blurRadius: 15,
+              spreadRadius: -2,
+            )
+          ] : [],
         ),
+        clipBehavior: Clip.antiAlias,
         child: Stack(
           fit: StackFit.expand,
           children: [
@@ -72,14 +68,34 @@ class StatusGridItem extends StatelessWidget {
                     ),
             ),
             
-            // Minimalist Video Indicator
+            // Texture Overlay
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Colors.white.withValues(alpha: 0.05),
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: 0.2),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // Video Indicator
             if (statusFile.isVideo)
               Positioned(
-                bottom: 0,
-                right: 0,
+                top: 10,
+                right: 10,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  color: Theme.of(context).primaryColor,
+                  padding: const EdgeInsets.all(6),
+                  decoration: ShapeDecoration(
+                    color: Theme.of(context).primaryColor,
+                    shape: BeveledRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                  ),
                   child: const Icon(
                     Icons.play_arrow_rounded,
                     color: Colors.black,
@@ -88,19 +104,21 @@ class StatusGridItem extends StatelessWidget {
                 ),
               ),
 
-            // Selection Overlay (Solid)
+            // Selection Check (Obsidian style)
             if (isSelected)
-              Container(
-                color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
-                child: Center(
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
+              Positioned(
+                left: 10,
+                top: 10,
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: const ShapeDecoration(
+                    color: Colors.black,
+                    shape: CircleBorder(),
+                  ),
+                  child: Icon(
+                    Icons.check_rounded,
                     color: Theme.of(context).primaryColor,
-                    child: const Icon(
-                      Icons.check_rounded,
-                      color: Colors.black,
-                      size: 32,
-                    ),
+                    size: 16,
                   ),
                 ),
               ),

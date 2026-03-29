@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../providers/status_provider.dart';
 import '../utils/ad_helper.dart';
@@ -34,104 +35,108 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        title: Text(
-          provider.isSelectionMode
-              ? '${provider.selectedPaths.length} SELECTED'
-              : 'STATUS SAVER',
-        ),
-        leading: provider.isSelectionMode
-            ? IconButton(
-                icon: const Icon(Icons.close_rounded),
-                onPressed: () => provider.clearSelection(),
-              )
-            : null,
-        actions: [
-          if (provider.isSelectionMode)
-            IconButton(
-              icon: const Icon(Icons.arrow_downward_rounded),
-              tooltip: 'EXTRACT',
-              onPressed: () {
-                AdHelper.showInterstitialAd(
-                  onAdClosed: () async {
-                    final count = await provider.saveMultipleStatuses();
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('$count ASSETS SECURED', style: const TextStyle(fontWeight: FontWeight.w900)),
-                          backgroundColor: Theme.of(context).primaryColor,
-                          behavior: SnackBarBehavior.floating,
-                          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+      body: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) => [
+          SliverAppBar(
+            expandedHeight: 180,
+            floating: false,
+            pinned: true,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            flexibleSpace: FlexibleSpaceBar(
+              titlePadding: const EdgeInsets.only(left: 20, bottom: 60),
+              title: Text(
+                provider.isSelectionMode
+                    ? '${provider.selectedPaths.length} ASSETS'
+                    : 'ARCHIVE',
+                style: GoogleFonts.staatliches(
+                  fontSize: 32,
+                  color: Theme.of(context).primaryColor,
+                  letterSpacing: 4,
+                ),
+              ),
+              background: Container(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                child: Stack(
+                  children: [
+                    Positioned(
+                      right: -20,
+                      top: 40,
+                      child: Text(
+                        '0X',
+                        style: GoogleFonts.staatliches(
+                          fontSize: 180,
+                          color: Colors.white.withValues(alpha: 0.03),
                         ),
-                      );
-                    }
-                  },
-                );
-              },
-            ),
-          if (!provider.isSelectionMode)
-            IconButton(
-              icon: const Icon(Icons.refresh_rounded),
-              onPressed: () => provider.fetchStatuses(),
-            ),
-        ],
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(text: 'IMAGES'),
-            Tab(text: 'VIDEOS'),
-            Tab(text: 'SAVED'),
-          ],
-        ),
-      ),
-      body: Column(
-        children: [
-          const Divider(height: 1, thickness: 1),
-          Expanded(
-            child: Consumer<StatusProvider>(
-              builder: (context, provider, child) {
-                if (provider.isLoading) {
-                  return Center(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
-                      strokeWidth: 2,
-                    ),
-                  );
-                }
-
-                if (provider.errorMessage.isNotEmpty) {
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(40.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text('ERROR OCCURRED', style: Theme.of(context).textTheme.displayMedium),
-                          const SizedBox(height: 16),
-                          Text(provider.errorMessage, textAlign: TextAlign.center),
-                          const SizedBox(height: 32),
-                          ElevatedButton(
-                            onPressed: () => provider.fetchStatuses(),
-                            child: const Text('RETRY'),
-                          ),
-                        ],
                       ),
                     ),
-                  );
-                }
-
-                return TabBarView(
-                  controller: _tabController,
-                  children: [
-                    _buildGrid(provider, provider.images),
-                    _buildGrid(provider, provider.videos),
-                    _buildGrid(provider, provider.savedStatuses),
                   ],
-                );
-              },
+                ),
+              ),
+            ),
+            actions: [
+              if (provider.isSelectionMode)
+                IconButton(
+                  icon: const Icon(Icons.close_rounded),
+                  onPressed: () => provider.clearSelection(),
+                ),
+              if (provider.isSelectionMode)
+                IconButton(
+                  icon: const Icon(Icons.arrow_downward_rounded),
+                  onPressed: () {
+                    AdHelper.showInterstitialAd(
+                      onAdClosed: () async {
+                        final count = await provider.saveMultipleStatuses();
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('$count ASSETS SECURED'),
+                              backgroundColor: Theme.of(context).primaryColor,
+                              behavior: SnackBarBehavior.floating,
+                              shape: BeveledRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                            ),
+                          );
+                        }
+                      },
+                    );
+                  },
+                ),
+              if (!provider.isSelectionMode)
+                IconButton(
+                  icon: const Icon(Icons.refresh_rounded),
+                  onPressed: () => provider.fetchStatuses(),
+                ),
+            ],
+            bottom: TabBar(
+              controller: _tabController,
+              tabs: const [
+                Tab(text: 'IMAGES'),
+                Tab(text: 'VIDEOS'),
+                Tab(text: 'SAVED'),
+              ],
             ),
           ),
         ],
+        body: Consumer<StatusProvider>(
+          builder: (context, provider, child) {
+            if (provider.isLoading) {
+              return Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+                  strokeWidth: 2,
+                ),
+              );
+            }
+
+            return TabBarView(
+              controller: _tabController,
+              children: [
+                _buildGrid(provider, provider.images),
+                _buildGrid(provider, provider.videos),
+                _buildGrid(provider, provider.savedStatuses),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -143,21 +148,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'EMPTY',
-              style: GoogleFonts.outfit(
-                color: Colors.white10,
-                fontSize: 80,
-                fontWeight: FontWeight.w900,
-                letterSpacing: -4,
-              ),
-            ),
-            Text(
-              'ARCHIVE IS CURRENTLY STAGNANT',
-              style: GoogleFonts.outfit(
-                color: Colors.white24,
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 2,
+              'VOID',
+              style: GoogleFonts.staatliches(
+                color: Colors.white.withValues(alpha: 0.05),
+                fontSize: 100,
+                letterSpacing: 10,
               ),
             ),
           ],
@@ -172,22 +167,32 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         await provider.fetchStatuses();
         await provider.fetchSavedStatuses();
       },
-      child: GridView.builder(
-        padding: EdgeInsets.zero,
-        physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 0,
-          mainAxisSpacing: 0,
-          childAspectRatio: 1,
+      child: AnimationLimiter(
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: MasonryGridView.count(
+            crossAxisCount: 2,
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
+            itemCount: statuses.length,
+            itemBuilder: (context, index) {
+              return AnimationConfiguration.staggeredGrid(
+                position: index,
+                duration: const Duration(milliseconds: 500),
+                columnCount: 2,
+                child: FadeInAnimation(
+                  child: ScaleAnimation(
+                    scale: 0.9,
+                    child: StatusGridItem(
+                      statusFile: statuses[index],
+                      key: ValueKey(statuses[index].path),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
         ),
-        itemCount: statuses.length,
-        itemBuilder: (context, index) {
-          return StatusGridItem(
-            statusFile: statuses[index],
-            key: ValueKey(statuses[index].path),
-          );
-        },
       ),
     );
   }

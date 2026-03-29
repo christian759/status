@@ -68,17 +68,17 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.share_rounded, color: Colors.white),
+            icon: const Icon(Icons.share_rounded),
             onPressed: () {
               Share.shareXFiles([XFile(widget.statusFile.path)], text: 'Check out this video status!');
             },
@@ -91,9 +91,21 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
           // Video Player Area
           Expanded(
             child: Center(
-              child: _chewieController != null && _chewieController!.videoPlayerController.value.isInitialized
-                  ? Chewie(controller: _chewieController!)
-                  : CircularProgressIndicator(color: Theme.of(context).primaryColor, strokeWidth: 2),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Container(
+                  decoration: ShapeDecoration(
+                    shape: BeveledRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                      side: const BorderSide(color: Colors.white10, width: 1),
+                    ),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: _chewieController != null && _chewieController!.videoPlayerController.value.isInitialized
+                      ? Chewie(controller: _chewieController!)
+                      : CircularProgressIndicator(color: Theme.of(context).primaryColor, strokeWidth: 2),
+                ),
+              ),
             ),
           ),
           
@@ -107,10 +119,12 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
                 return AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
                   height: 60,
-                  decoration: BoxDecoration(
+                  decoration: ShapeDecoration(
                     color: isSaved ? Colors.black : Theme.of(context).primaryColor,
-                    border: Border.all(color: Theme.of(context).primaryColor, width: 2),
-                    borderRadius: BorderRadius.zero,
+                    shape: BeveledRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      side: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+                    ),
                   ),
                   child: Material(
                     color: Colors.transparent,
@@ -144,10 +158,10 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
                           const SizedBox(width: 12),
                           Text(
                             isSaved ? 'SECURED' : 'EXTRACT',
-                            style: GoogleFonts.outfit(
+                            style: GoogleFonts.staatliches(
                               color: isSaved ? Theme.of(context).primaryColor : Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w900,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
                               letterSpacing: 2.0,
                             ),
                           ),
