@@ -29,37 +29,68 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<StatusProvider>(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0F14),
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text(
-          'Status Saver',
-          style: GoogleFonts.outfit(
-            fontWeight: FontWeight.bold,
-            letterSpacing: 0.5,
-          ),
-        ),
+        title: provider.isSelectionMode
+            ? Text(
+                '${provider.selectedPaths.length} Selected',
+                style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: Theme.of(context).primaryColor),
+              )
+            : Text(
+                'STATUS SAVER',
+                style: GoogleFonts.outfit(
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 2.0,
+                ),
+              ),
+        leading: provider.isSelectionMode
+            ? IconButton(
+                icon: const Icon(Icons.close_rounded),
+                onPressed: () => provider.clearSelection(),
+              )
+            : null,
+        actions: [
+          if (provider.isSelectionMode)
+            IconButton(
+              icon: const Icon(Icons.save_alt_rounded),
+              tooltip: 'Save Selected',
+              onPressed: () async {
+                final count = await provider.saveMultipleStatuses();
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Saved $count statuses'),
+                      backgroundColor: Theme.of(context).primaryColor,
+                    ),
+                  );
+                }
+              },
+            ),
+          if (!provider.isSelectionMode)
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () => provider.fetchStatuses(),
+            ),
+        ],
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: const Color(0xFF00E676),
-          indicatorWeight: 3,
-          labelColor: const Color(0xFF00E676),
-          unselectedLabelColor: Colors.white54,
-          labelStyle: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 16),
-          unselectedLabelStyle: GoogleFonts.inter(fontWeight: FontWeight.normal, fontSize: 15),
           tabs: const [
-            Tab(text: 'Images'),
-            Tab(text: 'Videos'),
-            Tab(text: 'Saved'),
+            Tab(text: 'IMAGES'),
+            Tab(text: 'VIDEOS'),
+            Tab(text: 'SAVED'),
           ],
         ),
       ),
       body: Consumer<StatusProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading) {
-            return const Center(
+            return Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00E676)),
+                valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+                strokeWidth: 6,
               ),
             );
           }
@@ -67,21 +98,21 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           if (provider.errorMessage.isNotEmpty) {
             return Center(
               child: Padding(
-                padding: const EdgeInsets.all(24.0),
+                padding: const EdgeInsets.all(32.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.error_outline, size: 60, color: Colors.white54),
-                    const SizedBox(height: 16),
+                    Icon(Icons.error_outline_rounded, size: 80, color: Theme.of(context).primaryColor),
+                    const SizedBox(height: 24),
                     Text(
                       provider.errorMessage,
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.inter(color: Colors.white70, fontSize: 16),
+                      style: GoogleFonts.inter(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 32),
                     ElevatedButton(
                       onPressed: () => provider.fetchStatuses(),
-                      child: const Text('Retry'),
+                      child: const Text('RETRY'),
                     ),
                   ],
                 ),
@@ -108,13 +139,15 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.inbox_rounded, size: 80, color: Colors.white.withValues(alpha: 0.1)),
-            const SizedBox(height: 16),
+            Icon(Icons.inbox_rounded, size: 100, color: Theme.of(context).primaryColor.withValues(alpha: 0.2)),
+            const SizedBox(height: 24),
             Text(
-              'No statuses found',
+              'NO STATUSES FOUND',
               style: GoogleFonts.outfit(
-                color: Colors.white54,
-                fontSize: 20,
+                color: Colors.white24,
+                fontSize: 24,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.5,
               ),
             ),
           ],
@@ -123,8 +156,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     }
 
     return RefreshIndicator(
-      color: const Color(0xFF00E676),
-      backgroundColor: const Color(0xFF1E2732),
+      color: Colors.white,
+      backgroundColor: Theme.of(context).primaryColor,
+      strokeWidth: 3,
       onRefresh: () async {
         final provider = Provider.of<StatusProvider>(context, listen: false);
         await provider.fetchStatuses();
@@ -132,22 +166,22 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       },
       child: AnimationLimiter(
         child: GridView.builder(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(16),
           physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            childAspectRatio: 0.75, // Tall portraits
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 0.7, // Bolder, taller items
           ),
           itemCount: statuses.length,
           itemBuilder: (context, index) {
             return AnimationConfiguration.staggeredGrid(
               position: index,
-              duration: const Duration(milliseconds: 500),
+              duration: const Duration(milliseconds: 400),
               columnCount: 2,
               child: ScaleAnimation(
-                scale: 0.9,
+                scale: 0.8,
                 child: FadeInAnimation(
                   child: StatusGridItem(statusFile: statuses[index]),
                 ),

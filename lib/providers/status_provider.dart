@@ -8,6 +8,7 @@ class StatusProvider with ChangeNotifier {
   List<StatusFile> _images = [];
   List<StatusFile> _videos = [];
   List<StatusFile> _savedStatuses = [];
+  List<String> _selectedPaths = [];
   bool _isLoading = false;
   bool _permissionGranted = false;
   String _errorMessage = '';
@@ -15,9 +16,11 @@ class StatusProvider with ChangeNotifier {
   List<StatusFile> get images => _images;
   List<StatusFile> get videos => _videos;
   List<StatusFile> get savedStatuses => _savedStatuses;
+  List<String> get selectedPaths => _selectedPaths;
   bool get isLoading => _isLoading;
   bool get permissionGranted => _permissionGranted;
   String get errorMessage => _errorMessage;
+  bool get isSelectionMode => _selectedPaths.isNotEmpty;
 
   // Paths for WhatsApp Statuses
   final List<String> _whatsappPaths = [
@@ -116,5 +119,55 @@ class StatusProvider with ChangeNotifier {
     } catch (e) {
       return false;
     }
+  }
+
+  void toggleSelection(String path) {
+    if (_selectedPaths.contains(path)) {
+      _selectedPaths.remove(path);
+    } else {
+      _selectedPaths.add(path);
+    }
+    notifyListeners();
+  }
+
+  bool isSelected(String path) {
+    return _selectedPaths.contains(path);
+  }
+
+  void clearSelection() {
+    _selectedPaths.clear();
+    notifyListeners();
+  }
+
+  Future<int> saveMultipleStatuses() async {
+    int savedCount = 0;
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final directory = Directory('/storage/emulated/0/Pictures/StatusSaver');
+      if (!directory.existsSync()) {
+        directory.createSync(recursive: true);
+      }
+
+      for (String path in _selectedPaths) {
+        final fileName = path.split('/').last;
+        final savedFilePath = '${directory.path}/$fileName';
+        final sourceFile = File(path);
+        if (sourceFile.existsSync()) {
+          await sourceFile.copy(savedFilePath);
+          savedCount++;
+        }
+      }
+      
+      _selectedPaths.clear();
+      await fetchSavedStatuses();
+    } catch (e) {
+      debugPrint('Error saving multiple statuses: $e');
+    }
+
+    _isLoading = false;
+    notifyListeners();
+    return savedCount;
   }
 }

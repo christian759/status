@@ -41,122 +41,81 @@ class _SuccessScreenState extends State<SuccessScreen> with SingleTickerProvider
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF0F2027),
-              Color(0xFF203A43),
-              Color(0xFF2C5364),
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(32.0),
-              child: AnimatedBuilder(
-                animation: _controller,
-                builder: (context, child) {
-                  return Opacity(
-                    opacity: _fadeAnimation.value,
-                    child: Transform.scale(
-                      scale: _scaleAnimation.value,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // Glowing Success Icon
-                          Container(
-                            padding: const EdgeInsets.all(32),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: const Color(0xFF00E676).withValues(alpha: 0.1),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0xFF00E676).withValues(alpha: 0.3),
-                                  blurRadius: 50,
-                                  spreadRadius: 15,
-                                ),
-                              ],
-                              border: Border.all(
-                                color: const Color(0xFF00E676).withValues(alpha: 0.5),
-                                width: 2,
-                              ),
-                            ),
-                            child: const Icon(
-                              Icons.check_circle_rounded,
-                              size: 100,
-                              color: Color(0xFF00E676),
+      backgroundColor: Colors.black,
+      body: SafeArea(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(40.0),
+            child: AnimatedBuilder(
+              animation: _controller,
+              builder: (context, child) {
+                return Opacity(
+                  opacity: _fadeAnimation.value,
+                  child: Transform.scale(
+                    scale: _scaleAnimation.value,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Bold Success Icon
+                        Container(
+                          padding: const EdgeInsets.all(40),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.circular(24),
+                            color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                            border: Border.all(
+                              color: Theme.of(context).primaryColor,
+                              width: 3,
                             ),
                           ),
-                          const SizedBox(height: 48),
-                          
-                          // Success Text
-                          Text(
-                            'Saved Successfully!',
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.outfit(
-                              fontSize: 36,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              shadows: [
-                                const Shadow(
-                                  blurRadius: 20,
-                                  color: Colors.black45,
-                                  offset: Offset(0, 4),
-                                ),
-                              ],
-                            ),
+                          child: Icon(
+                            Icons.check_circle_outline_rounded,
+                            size: 120,
+                            color: Theme.of(context).primaryColor,
                           ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'Your status has been saved to the gallery.',
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.inter(
-                              fontSize: 18,
-                              color: Colors.white70,
-                              height: 1.5,
-                            ),
+                        ),
+                        const SizedBox(height: 60),
+                        
+                        // Success Text
+                        Text(
+                          'SAVED!',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.outfit(
+                            fontSize: 48,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                            letterSpacing: 4.0,
                           ),
-                          const SizedBox(height: 64),
-                          
-                          // Back Button
-                          SizedBox(
-                            width: double.infinity,
-                            height: 60,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white.withValues(alpha: 0.1),
-                                foregroundColor: Colors.white,
-                                elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                  side: BorderSide(
-                                    color: Colors.white.withValues(alpha: 0.2),
-                                  ),
-                                ),
-                              ),
-                              child: Text(
-                                'Awesome, go back',
-                                style: GoogleFonts.inter(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 0.5,
-                                ),
-                              ),
-                            ),
+                        ),
+                        const SizedBox(height: 24),
+                        Text(
+                          'THE STATUS HAS BEEN SECURED IN YOUR GALLERY.',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.inter(
+                            fontSize: 18,
+                            color: Colors.white70,
+                            height: 1.6,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1,
                           ),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(height: 80),
+                        
+                        // Back Button
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text('BACK TO FEED'),
+                          ),
+                        ),
+                      ],
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
           ),
         ),

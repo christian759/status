@@ -81,9 +81,9 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
           
           // Bottom Actions
           Positioned(
-            bottom: 32,
-            left: 32,
-            right: 32,
+            bottom: 40,
+            left: 40,
+            right: 40,
             child: Consumer<StatusProvider>(
               builder: (context, provider, child) {
                 final isSaved = provider.savedStatuses.any((s) => s.path.endsWith(widget.statusFile.path.split('/').last));
@@ -92,30 +92,26 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
                   duration: const Duration(milliseconds: 300),
                   height: 64,
                   decoration: BoxDecoration(
-                    color: isSaved ? const Color(0xFF1E2732).withValues(alpha: 0.9) : const Color(0xFF00E676).withValues(alpha: 0.95),
-                    borderRadius: BorderRadius.circular(32),
+                    color: isSaved ? Colors.white10 : Colors.crimson,
+                    borderRadius: BorderRadius.circular(8), // Sharper
                     boxShadow: [
-                      BoxShadow(
-                        color: isSaved ? Colors.black26 : const Color(0xFF00E676).withValues(alpha: 0.4),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
-                      ),
+                      if (!isSaved)
+                        BoxShadow(
+                          color: Colors.crimson.withValues(alpha: 0.4),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                        ),
                     ],
                   ),
                   child: Material(
                     color: Colors.transparent,
                     child: InkWell(
-                      borderRadius: BorderRadius.circular(32),
+                      borderRadius: BorderRadius.circular(8),
                       onTap: isSaved ? null : () {
-                        // Store references before async gaps
-                        final scaffoldMessenger = ScaffoldMessenger.of(context);
                         final navigator = Navigator.of(context);
-
-                        // Show Ad First, then Save
                         AdHelper.showInterstitialAd(
                           onAdClosed: () async {
                             final success = await provider.saveStatus(widget.statusFile.path);
-                            
                             if (success) {
                               navigator.pushReplacement(
                                 PageRouteBuilder(
@@ -123,18 +119,6 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
                                   transitionsBuilder: (context, animation, secondaryAnimation, child) {
                                     return FadeTransition(opacity: animation, child: child);
                                   },
-                                ),
-                              );
-                            } else {
-                              scaffoldMessenger.showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Failed to save status.',
-                                    style: GoogleFonts.inter(fontWeight: FontWeight.w600),
-                                  ),
-                                  backgroundColor: Colors.redAccent,
-                                  behavior: SnackBarBehavior.floating,
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                 ),
                               );
                             }
@@ -147,14 +131,16 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
                           Icon(
                             isSaved ? Icons.check_circle_rounded : Icons.download_rounded,
                             color: Colors.white,
+                            size: 28,
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 12),
                           Text(
-                            isSaved ? 'Saved' : 'Save Status',
+                            isSaved ? 'SAVED' : 'DOWNLOAD',
                             style: GoogleFonts.outfit(
                               color: Colors.white,
                               fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 1.5,
                             ),
                           ),
                         ],

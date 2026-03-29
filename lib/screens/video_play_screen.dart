@@ -40,8 +40,8 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
       looping: true,
       showControls: true,
       materialProgressColors: ChewieProgressColors(
-        playedColor: const Color(0xFF00E676),
-        handleColor: const Color(0xFF00E676),
+        playedColor: Theme.of(context).primaryColor,
+        handleColor: Theme.of(context).primaryColor,
         backgroundColor: Colors.white24,
         bufferedColor: Colors.white54,
       ),
@@ -76,7 +76,7 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
           Center(
             child: _chewieController != null && _chewieController!.videoPlayerController.value.isInitialized
                 ? Chewie(controller: _chewieController!)
-                : const CircularProgressIndicator(color: Color(0xFF00E676)),
+                : CircularProgressIndicator(color: Theme.of(context).primaryColor, strokeWidth: 6),
           ),
           
           // Glassmorphic App Bar
@@ -114,11 +114,10 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
             ),
           ),
           
-          // Save Button
           Positioned(
-            bottom: 32,
-            left: 32,
-            right: 32,
+            bottom: 40,
+            left: 40,
+            right: 40,
             child: Consumer<StatusProvider>(
               builder: (context, provider, child) {
                 final isSaved = provider.savedStatuses.any((s) => s.path.endsWith(widget.statusFile.path.split('/').last));
@@ -127,30 +126,26 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
                   duration: const Duration(milliseconds: 300),
                   height: 64,
                   decoration: BoxDecoration(
-                    color: isSaved ? const Color(0xFF1E2732).withValues(alpha: 0.9) : const Color(0xFF00E676).withValues(alpha: 0.95),
-                    borderRadius: BorderRadius.circular(32),
+                    color: isSaved ? Colors.white10 : Theme.of(context).primaryColor,
+                    borderRadius: BorderRadius.circular(8),
                     boxShadow: [
-                      BoxShadow(
-                        color: isSaved ? Colors.black26 : const Color(0xFF00E676).withValues(alpha: 0.4),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
-                      ),
+                      if (!isSaved)
+                        BoxShadow(
+                          color: Theme.of(context).primaryColor.withValues(alpha: 0.4),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                        ),
                     ],
                   ),
                   child: Material(
                     color: Colors.transparent,
                     child: InkWell(
-                      borderRadius: BorderRadius.circular(32),
+                      borderRadius: BorderRadius.circular(8),
                       onTap: isSaved ? null : () {
-                        // Store references before async gaps
-                        final scaffoldMessenger = ScaffoldMessenger.of(context);
                         final navigator = Navigator.of(context);
-
-                        // Show Ad First, then Save
                         AdHelper.showInterstitialAd(
                           onAdClosed: () async {
                             final success = await provider.saveStatus(widget.statusFile.path);
-                            
                             if (success) {
                               navigator.pushReplacement(
                                 PageRouteBuilder(
@@ -158,18 +153,6 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
                                   transitionsBuilder: (context, animation, secondaryAnimation, child) {
                                     return FadeTransition(opacity: animation, child: child);
                                   },
-                                ),
-                              );
-                            } else {
-                              scaffoldMessenger.showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Failed to save video.',
-                                    style: GoogleFonts.inter(fontWeight: FontWeight.w600),
-                                  ),
-                                  backgroundColor: Colors.redAccent,
-                                  behavior: SnackBarBehavior.floating,
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                 ),
                               );
                             }
@@ -182,14 +165,16 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
                           Icon(
                             isSaved ? Icons.check_circle_rounded : Icons.download_rounded,
                             color: Colors.white,
+                            size: 28,
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 12),
                           Text(
-                            isSaved ? 'Saved' : 'Save Status',
+                            isSaved ? 'SAVED' : 'DOWNLOAD',
                             style: GoogleFonts.outfit(
                               color: Colors.white,
                               fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 1.5,
                             ),
                           ),
                         ],
