@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) => [
           SliverAppBar(
-            expandedHeight: 140,
+            expandedHeight: 120,
             floating: false,
             pinned: true,
             backgroundColor: Theme.of(context).colorScheme.surface,

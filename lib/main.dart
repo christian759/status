@@ -8,6 +8,17 @@ import 'utils/ad_helper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Globally silence all UI errors as requested
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    return const SizedBox.shrink();
+  };
+  
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+    debugPrint('Squelched UI Error: ${details.exception}');
+  };
+
   AdHelper.initAds();
   runApp(
     MultiProvider(

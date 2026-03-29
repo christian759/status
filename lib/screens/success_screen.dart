@@ -55,11 +55,19 @@ class _SuccessScreenState extends State<SuccessScreen> with SingleTickerProvider
               child: AnimatedBuilder(
                 animation: _controller!,
                 builder: (context, child) {
+                  final scale = _scaleAnimation;
+                  final fade = _fadeAnimation;
+                  
+                  if (scale == null || fade == null) {
+                    return const SizedBox.shrink();
+                  }
+
                   return Opacity(
-                    opacity: _fadeAnimation!.value,
+                    opacity: fade.value,
                     child: Transform.scale(
-                      scale: _scaleAnimation!.value,
+                      scale: scale.value,
                       child: Column(
+
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           // Rounded Success Icon
