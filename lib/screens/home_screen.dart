@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../providers/status_provider.dart';
+import '../utils/ad_helper.dart';
 import '../widgets/status_grid_item.dart';
 
 class HomeScreen extends StatefulWidget {

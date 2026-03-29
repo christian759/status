@@ -43,7 +43,7 @@ class AppTheme {
         bodyLarge: GoogleFonts.jetBrainsMono(fontSize: 14, color: textPrimary, fontWeight: FontWeight.w400),
         bodyMedium: GoogleFonts.jetBrainsMono(fontSize: 12, color: textSecondary),
       ),
-      tabBarTheme: TabBarTheme(
+      tabBarTheme: TabBarThemeData(
         indicatorColor: primaryColor,
         labelColor: primaryColor,
         unselectedLabelColor: textSecondary,

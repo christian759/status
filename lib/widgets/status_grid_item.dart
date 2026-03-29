@@ -146,13 +146,13 @@ class _VideoThumbnailWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<String?>(
-      future: VideoThumbnail.thumbnailFile(
+      future: getTemporaryDirectory().then((tempDir) => VideoThumbnail.thumbnailFile(
         video: videoPath,
-        thumbnailPath: (await getTemporaryDirectory()).path,
+        thumbnailPath: tempDir.path,
         imageFormat: ImageFormat.JPEG,
         maxWidth: 256,
         quality: 50,
-      ),
+      )),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done && snapshot.hasData && snapshot.data != null) {
           return Image.file(
